@@ -1,0 +1,7 @@
+{
+  "name": "oxyplus-app",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
