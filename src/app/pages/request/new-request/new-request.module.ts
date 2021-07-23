@@ -8,6 +8,7 @@ import { NewRequestPageRoutingModule } from './new-request-routing.module';
 
 import { NewRequestPage } from './new-request.page';
 import { GoogleMapModule } from 'src/app/google-map/google-map.module';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 @NgModule({
   imports: [
@@ -15,7 +16,8 @@ import { GoogleMapModule } from 'src/app/google-map/google-map.module';
     ReactiveFormsModule,
     IonicModule,
     NewRequestPageRoutingModule,
-    GoogleMapModule
+    GoogleMapModule,
+    SharedModule
   ],
   declarations: [NewRequestPage]
 })

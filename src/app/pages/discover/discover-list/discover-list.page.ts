@@ -26,8 +26,7 @@ export class DiscoverListPage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.subscriptions.push(
-      this.userService.isDonarProfile.subscribe((isDonor) => {
-        console.log('am I a donor? =====>', isDonor);
+      this.userService.isDonorProfile.subscribe((isDonor) => {
         this.isDonor = isDonor;
       })
     );

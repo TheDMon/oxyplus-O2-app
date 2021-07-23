@@ -11,6 +11,7 @@ import { UserService } from 'src/app/pages/login/user.service';
   providedIn: 'root',
 })
 export class DiscoverService {
+  apiBaseUrl = 'http://localhost:3000';
   private _discoveredRequests = new BehaviorSubject<Request[]>([]);
   private _discoveredDonors = new BehaviorSubject<User[]>([]);
   private _distance = new BehaviorSubject<number>(10);
@@ -43,7 +44,7 @@ export class DiscoverService {
     ),
       //take(1),
       switchMap((user) => this.http.get<Request[]>(
-          `http://localhost:3000/request/submitted/near-by/${user._id}?distance=${distance}`
+          `${this.apiBaseUrl}/request/submitted/near-by/${user._id}?distance=${distance}`
         )),
       tap((requests) => {
         this._discoveredRequests.next(requests);
@@ -61,7 +62,7 @@ export class DiscoverService {
     ),
       //take(1),
       switchMap((user) => this.http
-          .get<User[]>(`http://localhost:3000/donar/near-by/${user._id}?distance=${distance}`)),
+          .get<User[]>(`${this.apiBaseUrl}/oxyplus/donors/near-by/${user._id}?distance=${distance}`)),
       tap((donors) => {
         this._discoveredDonors.next(donors);
       })

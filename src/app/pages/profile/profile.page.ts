@@ -19,7 +19,7 @@ export class ProfilePage implements OnInit {
   user: User;
   showProgess = false;
   isNewProfile = false;
-  isDonar = false;
+  isDonor = false;
   selectedRoleID: string;
 
   roles: Role[];
@@ -58,73 +58,64 @@ export class ProfilePage implements OnInit {
       (err) => console.log(err),
       () => {
         console.log(this.roles);
-        this.checkIfDonar();
+        this.checkIfDonor();
       }
     );
   }
 
-  checkIfDonar() {
-    console.log(this.selectedRoleID);
-    // eslint-disable-next-line no-underscore-dangle
-    const selectedRole = this.roles.find((x) => x._id === this.selectedRoleID);
-    this.user.role = selectedRole;
-    if (selectedRole && selectedRole.name !== 'Recipient') {
-      this.isDonar = true;
-    }
+  checkIfDonor() {
+    this.userService.isDonorProfile.subscribe(isDonor => this.isDonor = isDonor);
   }
 
-  async createProfile() {
+  createProfile() {
     console.log('user', this.user);
     this.showProgess = true;
-    const self = this;
-    await this.http
-      .post<User>(`http://localhost:3000/donar/create`, this.user)
-      .toPromise()
-      .then((data) => {
-        console.log('Profile created successfully');
+
+    this.userService.createUserProfile(this.user).subscribe({
+      complete: () => {
         this.alertUtil.presentAlert(
           'Profile',
           '',
           'Profile created successfully'
         );
-        this.userService.loadUserProfile(this.user.email);
-      })
-      .catch((err) => {
-        console.log(`error occurred: ${err}`);
+
+        this.showProgess = false;
+      },
+      error: (error) => {
         this.alertUtil.presentAlert(
           'Error',
           'An error occurred',
-          `Error details ${err}`
+          `Error details: ${error}`
         );
-      });
-    this.showProgess = false;
+
+        this.showProgess = false;
+      }
+    });
   }
 
-  async updateProfile() {
+  updateProfile() {
     console.log('user', this.user);
     this.showProgess = true;
-    const self = this;
-    await this.http
-      .post<User>(`http://localhost:3000/donar/update`, this.user)
-      .toPromise()
-      .then((data) => {
-        console.log('Profile updated successfully');
+
+    this.userService.updateUserProfile(this.user).subscribe({
+      complete: () => {
         this.alertUtil.presentAlert(
           'Profile',
           '',
           'Profile updated successfully'
         );
-        this.userService.loadUserProfile(this.user.email);
+
         this.showProgess = false;
-      })
-      .catch((err) => {
-        console.log(`error occurred: ${err}`);
+      },
+      error: (error) => {
         this.alertUtil.presentAlert(
           'Error',
           'An error occurred',
-          `Error details ${err}`
+          `Error details: ${error}`
         );
+
         this.showProgess = false;
-      });
+      }
+    });
   }
 }

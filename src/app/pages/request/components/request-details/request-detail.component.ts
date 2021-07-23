@@ -24,7 +24,7 @@ export class RequestDetailComponent implements OnInit {
   ) {}
 
   get isDonar() {
-    return this.userService.isDonarProfile;
+    return this.userService.isDonorProfile;
   }
 
   ngOnInit() {

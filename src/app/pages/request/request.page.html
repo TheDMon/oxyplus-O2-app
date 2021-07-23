@@ -1,9 +1,9 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home"></ion-back-button>
+      <ion-back-button defaultHref="/discover"></ion-back-button>
     </ion-buttons>
-    <ion-buttons *ngIf="!isDonar" slot="end">
+    <ion-buttons *ngIf="!isDonor" slot="end">
       <ion-button routerLink="/request/new-request">
         <ion-icon name="add" type="icon-only"></ion-icon>
       </ion-button>
@@ -13,11 +13,11 @@
 </ion-header>
 <ion-content>
   <ion-segment (ionChange)="onFilterUpdate($event)" [(ngModel)]="segment">
-    <ion-segment-button *ngIf="!isDonar"  value="active">Active</ion-segment-button>
-    <ion-segment-button *ngIf="isDonar" value="assigned"
+    <ion-segment-button *ngIf="!isDonor"  value="active">Active</ion-segment-button>
+    <ion-segment-button *ngIf="isDonor" value="assigned"
       >Assigned</ion-segment-button
     >
-    <ion-segment-button *ngIf="isDonar" value="follow-up"
+    <ion-segment-button *ngIf="isDonor" value="follow-up"
       >Follow-up</ion-segment-button
     >
     <ion-segment-button value="history">History</ion-segment-button>
@@ -52,7 +52,7 @@
               <h3>{{ request.requester }}</h3>
               <p>{{ request.location?.text }}</p>
             </ion-label>
-            <ion-label><p>{{ request.distance?.toFixed(2) }} KM</p></ion-label>
+            <ion-label *ngIf="isDonor"><p>{{ request.distance?.toFixed(2) }} KM</p></ion-label>
           </ion-item>
         </ion-list>
       </ion-col>

@@ -19,7 +19,7 @@ export class RequestPage implements OnInit, OnDestroy {
   requestType: string;
   allRequests: Request[];
   requests: Request[];
-  isDonar = false;
+  isDonor = false;
   segment = 'active';
   isLoading = false;
 
@@ -42,12 +42,12 @@ export class RequestPage implements OnInit, OnDestroy {
 
   ionViewWillEnter() {
     this.isLoading = true;
-    this.userService.isDonarProfile
+    this.userService.isDonorProfile
       .pipe(
         switchMap((isDonarProfile) => {
-          this.isDonar = isDonarProfile;
-          this.segment = this.isDonar ? 'assigned': 'active';
-          return this.requestService.fetchRequests(this.isDonar);
+          this.isDonor = isDonarProfile;
+          this.segment = this.isDonor ? 'assigned': 'active';
+          return this.requestService.fetchRequests(this.isDonor);
         })
       )
       .subscribe(() => {
@@ -74,7 +74,7 @@ export class RequestPage implements OnInit, OnDestroy {
       );
     } else if (segment === 'history') {
       this.requests = this.allRequests.filter(
-        (x) => (this.isDonar ? !x.followUpRequired : true) &&
+        (x) => (this.isDonor ? !x.followUpRequired : true) &&
           (x.requestStatus.desc !== 'Processing' &&
           x.requestStatus.desc !== 'Submitted')
       );
@@ -82,7 +82,7 @@ export class RequestPage implements OnInit, OnDestroy {
   }
 
   findActiveRequests(requests: Request[]) {
-    if (this.isDonar) {
+    if (this.isDonor) {
       return requests.filter((x) => x.requestStatus.desc === 'Submitted');
     } else {
       return requests.filter(

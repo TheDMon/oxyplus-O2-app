@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { ViewRequestPage } from './view-request.page';
+import { LocationAutosuggestComponent } from './location-autosuggest.component';
 
-describe('ViewRequestPage', () => {
-  let component: ViewRequestPage;
-  let fixture: ComponentFixture<ViewRequestPage>;
+describe('LocationAutosuggestComponent', () => {
+  let component: LocationAutosuggestComponent;
+  let fixture: ComponentFixture<LocationAutosuggestComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ ViewRequestPage ],
+      declarations: [ LocationAutosuggestComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ViewRequestPage);
+    fixture = TestBed.createComponent(LocationAutosuggestComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

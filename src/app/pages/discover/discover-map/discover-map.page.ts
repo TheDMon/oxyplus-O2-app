@@ -18,7 +18,7 @@ import { DiscoverService } from '../discover.service';
 })
 export class DiscoverMapPage implements OnInit, OnDestroy {
   @ViewChild(MapMyIndiaComponent) map: MapMyIndiaComponent;
-  isDonar = false;
+  isDonor = false;
   distance: number;
   subscriptions: Subscription[] = [];
 
@@ -30,8 +30,8 @@ export class DiscoverMapPage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.subscriptions.push(
-      this.userService.isDonarProfile.subscribe(
-        (isDonar) => (this.isDonar = isDonar)
+      this.userService.isDonorProfile.subscribe(
+        (isDonor) => (this.isDonor = isDonor)
       )
     );
 
@@ -47,7 +47,7 @@ export class DiscoverMapPage implements OnInit, OnDestroy {
   }
 
   onMapLoadCompleted(e: any) {
-    if (this.isDonar) {
+    if (this.isDonor) {
       this.findRequests();
     } else {
       this.findDonars();
@@ -57,11 +57,11 @@ export class DiscoverMapPage implements OnInit, OnDestroy {
   }
 
   loadMapData() {
-    this.userService.isDonarProfile
+    this.userService.isDonorProfile
       .pipe(
         take(1),
         map((isDonar) => {
-          this.isDonar = isDonar;
+          this.isDonor = isDonar;
           if (!isDonar) {
             this.findDonars();
           } else {
@@ -80,12 +80,12 @@ export class DiscoverMapPage implements OnInit, OnDestroy {
         )
         .map((x) => {
           const infoWin = new MapInfoWindow();
-          infoWin.title = `${x.firstname} ${x.lastname}`;
+          infoWin.title = `${x.name}`;
           infoWin.addressText = x.address.text;
           infoWin.mobile = x.mobile;
 
           const m = new MapMarker();
-          m.title = `${x.firstname} ${x.lastname}`;
+          m.title = `${x.name}`;
           m.position = x.address.location;
           m.infoWin = infoWin;
 

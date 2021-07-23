@@ -34,7 +34,7 @@
         <ion-item *ngFor="let donor of donors">
           <ion-label>
             <h3>
-              {{ donor.firstname }} {{ donor.lastname}}
+              {{ donor.name }}
               {{donor.distance?.toFixed(2) }} KM
             </h3>
             <p>{{ donor.address.text }}</p>

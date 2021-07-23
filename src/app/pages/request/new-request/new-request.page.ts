@@ -7,6 +7,7 @@ import { Address } from 'src/app/models/address';
 import { Request } from 'src/app/models/request';
 import { RequestService } from 'src/app/pages/request/request.service';
 import { UserService } from 'src/app/pages/login/user.service';
+import { AlertUtil } from 'src/app/alert-utility/alert-utility.util';
 
 @Component({
   selector: 'app-new-request',
@@ -20,7 +21,8 @@ export class NewRequestPage implements OnInit {
   constructor(
     private requestService: RequestService,
     private navCtrl: NavController,
-    private userService: UserService
+    private userService: UserService,
+    private alertUtil: AlertUtil
   ) {}
 
   ngOnInit() {
@@ -28,7 +30,7 @@ export class NewRequestPage implements OnInit {
       this.location = user.address;
 
       this.form = new FormGroup({
-        requester: new FormControl(user.firstname, {
+        requester: new FormControl(user.name, {
           updateOn: 'blur',
           validators: [Validators.required],
         }),
@@ -70,6 +72,7 @@ export class NewRequestPage implements OnInit {
         })
       )
       .subscribe(() => {
+        this.alertUtil.presentToast('Request has been submitted!');
         this.form.reset();
         this.navCtrl.pop();
       });

@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Address } from '../models/address';
 
-declare var google: any;
+declare let google: any;
 
 @Component({
   selector: 'app-location-autocomplete',
@@ -10,7 +10,8 @@ declare var google: any;
 })
 export class LocationAutocompleteComponent implements OnInit {
   @Input() address: Address;
-  @Output() onChange: EventEmitter<Address> = new EventEmitter<Address>();
+  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
+  @Output() onChange = new EventEmitter<Address>();
   addressText: string;
 
   constructor() { }
@@ -61,7 +62,13 @@ export class LocationAutocompleteComponent implements OnInit {
               lng: place.geometry.location.lng()
             };
 
-            this.address.text = place.name;
+            let addressText = '';
+            place.address_components.forEach(addrComp => {
+              addressText += ', ' + addrComp.long_name;
+            });
+
+            addressText = addressText.substr(2, addressText.length);
+            this.address.text = addressText;
           } else{
             this.address = null;
           }

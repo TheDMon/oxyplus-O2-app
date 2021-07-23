@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { UserService } from '../login/user.service';
 import { DiscoverService } from './discover.service';
 
 @Component({
@@ -7,14 +8,16 @@ import { DiscoverService } from './discover.service';
   styleUrls: ['./discover.page.scss'],
 })
 export class DiscoverPage implements OnInit {
-  distance: number = 10;
+  distance = 10;
+  isDonor: boolean;
 
-  constructor(private discoverService: DiscoverService) {}
+  constructor(private discoverService: DiscoverService, private userService: UserService) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.userService.isDonorProfile.subscribe(isDonor => this.isDonor = isDonor);
+  }
 
   onRangeChange() {
-    console.log(this.distance);
     this.discoverService.setDistance(this.distance);
   }
 }

@@ -4,15 +4,10 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, throwError } from 'rxjs';
 import { switchMap, take, tap } from 'rxjs/operators';
 
+import { ApiResponse } from 'src/app/models/api-response';
 import { Request, RequestStatus } from '../../models/request';
 import { DiscoverService } from '../discover/discover.service';
 import { UserService } from '../login/user.service';
-
-interface ResponseData {
-  id: string;
-  ok: boolean;
-  rev: string;
-}
 
 @Injectable({ providedIn: 'root' })
 export class RequestService {
@@ -31,7 +26,7 @@ export class RequestService {
 
   requestStatusList() {
     return this.http.get<RequestStatus[]>(
-      `${this.apiBaseUrl}/donar/list/RequestStatus`
+      `${this.apiBaseUrl}/oxyplus/list/RequestStatus`
     );
   }
 
@@ -42,7 +37,7 @@ export class RequestService {
       switchMap((user) => {
         console.log('Switched from loggedInUser');
         newRequest.submittedBy = user;
-        return this.http.post<ResponseData>(
+        return this.http.post<ApiResponse>(
           `${this.apiBaseUrl}/request/create`,
           newRequest
         );
@@ -74,7 +69,7 @@ export class RequestService {
       take(1),
       switchMap((user) => {
         editRequest.updatedBy = user;
-        return this.http.post<ResponseData>(
+        return this.http.post<ApiResponse>(
           `${this.apiBaseUrl}/request/update`,
           editRequest
         );
