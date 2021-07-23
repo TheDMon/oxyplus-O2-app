@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { Address } from '../models/address';
 
 declare let google: any;
@@ -8,7 +8,7 @@ declare let google: any;
   templateUrl: './location-autocomplete.component.html',
   styleUrls: ['./location-autocomplete.component.scss'],
 })
-export class LocationAutocompleteComponent implements OnInit {
+export class LocationAutocompleteComponent implements OnInit, OnChanges {
   @Input() address: Address;
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   @Output() onChange = new EventEmitter<Address>();
@@ -24,6 +24,10 @@ export class LocationAutocompleteComponent implements OnInit {
     this.addressText = this.address.text;
 
     this.bindGoogleAutocomplete();
+  }
+
+  ngOnChanges(){
+    this.addressText = this.address.text; // let's change address if parent component sends a different one
   }
 
   bindGoogleAutocomplete(){

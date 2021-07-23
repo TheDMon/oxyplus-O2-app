@@ -53,7 +53,7 @@ export class ProfilePage implements OnInit {
   }
 
   getRoles() {
-    this.http.get<Role[]>(`http://localhost:3000/donar/list/Role`).subscribe(
+    this.http.get<Role[]>(`http://localhost:3000/oxyplus/list/Role`).subscribe(
       (data) => (this.roles = data),
       (err) => console.log(err),
       () => {

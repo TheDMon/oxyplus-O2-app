@@ -3,11 +3,12 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { NavController } from '@ionic/angular';
 import { switchMap, take } from 'rxjs/operators';
 
-import { Address } from 'src/app/models/address';
-import { Request } from 'src/app/models/request';
-import { RequestService } from 'src/app/pages/request/request.service';
-import { UserService } from 'src/app/pages/login/user.service';
-import { AlertUtil } from 'src/app/alert-utility/alert-utility.util';
+import { Address } from '../../../models/address';
+import { Request } from '../../../models/request';
+import { RequestService } from '../../../pages/request/request.service';
+import { UserService } from '../../../pages/login/user.service';
+import { AlertUtil } from '../../../alert-utility/alert-utility.util';
+import { User } from '../../../models/user';
 
 @Component({
   selector: 'app-new-request',
@@ -17,6 +18,8 @@ import { AlertUtil } from 'src/app/alert-utility/alert-utility.util';
 export class NewRequestPage implements OnInit {
   form: FormGroup;
   location: Address;
+  currentUser: User;
+  request: User;
 
   constructor(
     private requestService: RequestService,
@@ -27,6 +30,7 @@ export class NewRequestPage implements OnInit {
 
   ngOnInit() {
     this.userService.loggedInUser.pipe(take(1)).subscribe((user) => {
+      this.currentUser = user;
       this.location = user.address;
 
       this.form = new FormGroup({
@@ -48,6 +52,22 @@ export class NewRequestPage implements OnInit {
 
   onLocationChange(addr: Address) {
     this.form.value.location = addr;
+  }
+
+  onBehalfChanged(event: any){
+    if(event.detail.checked){
+      console.log('setting null since value is : ', event.detail.checked);
+      this.form.get('requester').setValue(null);
+      this.form.get('location').setValue(null);
+      this.form.get('contact').setValue(null);
+      this.location = new Address();
+    } else{
+      console.log('setting user values since value is : ', event.detail.checked);
+      this.form.get('requester').setValue(this.currentUser.name);
+      this.form.get('location').setValue(this.currentUser.address);
+      this.form.get('contact').setValue( this.currentUser.mobile);
+      this.location = this.currentUser.address;
+    }
   }
 
   addRequest() {

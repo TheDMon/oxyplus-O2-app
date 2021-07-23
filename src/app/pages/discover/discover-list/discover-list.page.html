@@ -1,5 +1,5 @@
 <ion-content>
-  <ion-searchbar debounce="500"></ion-searchbar>
+  <!-- <ion-searchbar debounce="500"></ion-searchbar> -->
   <ion-grid *ngIf="isDonor && requests.length > 0">
     <ion-row>
       <ion-col size-md="6" offset-md="3">
@@ -31,14 +31,27 @@
   <ion-grid *ngIf="!isDonor && donors.length > 0">
     <ion-row>
       <ion-col size-md="6" offset-md="3">
-        <ion-item *ngFor="let donor of donors">
-          <ion-label>
+        <ion-item *ngFor="let donor of donors" lines="none">
+          <ion-card>
+            <ion-card-header>
+              <ion-card-subtitle>
+                {{donor.distance?.toFixed(2) }} KM
+                <ion-label slot="end">test</ion-label>
+              </ion-card-subtitle>
+              <ion-card-title>{{ donor.name }}</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <p><ion-icon name="call"></ion-icon>{{ donor.mobile }}</p>
+              <p><ion-icon name="location"></ion-icon>{{ donor.address.text }}</p>
+            </ion-card-content>
+          </ion-card>
+          <!-- <ion-label>
             <h3>
               {{ donor.name }}
               {{donor.distance?.toFixed(2) }} KM
             </h3>
             <p>{{ donor.address.text }}</p>
-          </ion-label>
+          </ion-label> -->
         </ion-item>
       </ion-col>
     </ion-row>
