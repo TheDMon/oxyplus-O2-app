@@ -1,0 +1,24 @@
+<ion-list>
+  <ion-item *ngFor="let item of requests" (click)="requestClicked(item)">
+    <ion-grid>
+      <ion-row>
+        <ion-col>{{ item.requester }}</ion-col>
+        <ion-col>{{ item.contact }}</ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          {{ item.location.text }}
+        </ion-col>
+      </ion-row>
+      <!-- <ion-row>
+                <ion-col>{{ item.requestStatus.desc }}</ion-col>
+                <ion-col>
+                    <ion-button (click)="cancelRequest(item)">Cancel</ion-button>
+                </ion-col>
+            </ion-row> -->
+    </ion-grid>
+  </ion-item>
+</ion-list>
+<ion-item *ngIf="!requests">
+  <ion-label>No records found</ion-label>
+</ion-item>

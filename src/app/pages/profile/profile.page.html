@@ -1,0 +1,48 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title *ngIf="isNewProfile">Complete your profile</ion-title>
+    <ion-title *ngIf="!isNewProfile">Update your profile</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-progress-bar type="indeterminate" *ngIf="showProgess"></ion-progress-bar>
+
+<ion-content>
+  <ion-item>
+    <ion-label position="floating">First Name</ion-label>
+    <ion-input [(ngModel)]="user.firstname" placeholder="First Name"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="floating">Last Name</ion-label>
+    <ion-input [(ngModel)]="user.lastname" placeholder="Last Name"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="floating">Location</ion-label>
+    <app-location-autocomplete
+      style="width: 100%;"
+      [address]="user.address"
+      (onChange)="onLocationChange($event)">
+    </app-location-autocomplete>
+  </ion-item>
+  <ion-item>
+    <ion-label position="floating">Contact</ion-label>
+    <ion-input [(ngModel)]="user.mobile" placeholder="Contact"></ion-input>
+  </ion-item>
+  <ion-item *ngIf="roles">
+    <ion-label position="floating">Role</ion-label>
+    <ion-select placeholder="Select One" [(ngModel)]="selectedRoleID" (ionChange)="checkIfDonar()">
+      <ion-select-option *ngFor="let role of roles" [value]="role._id ">{{ role.name }}</ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ion-item *ngIf="isDonar">
+    <ion-label position="floating">Quantity</ion-label>
+    <ion-input [(ngModel)]="user.quantity" placeholder="enter no of cylinder" type="number"></ion-input>
+  </ion-item>
+  <section>
+    <ion-button *ngIf="isNewProfile" expand="full" (click)="createProfile()">Create</ion-button>
+    <ion-button *ngIf="!isNewProfile" expand="full" (click)="updateProfile()">Update</ion-button>
+  </section>
+</ion-content>

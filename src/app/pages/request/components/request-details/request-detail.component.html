@@ -1,0 +1,71 @@
+<ion-header>
+  <ion-toolbar class="primary">
+    <ion-title>Request Details</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="onClose()">
+        <ion-icon name="close-outline" type="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label>Requester</ion-label>
+          <ion-label>{{ request.requester }}</ion-label>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label>Location</ion-label>
+          <p>{{ request.location?.text }}</p>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label>Contact</ion-label>
+          <p>{{ request.contact }}</p>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label>Status</ion-label>
+          <p>{{ request.requestStatus?.desc }}</p>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="ion-text-center">
+        <ng-content
+          *ngIf="isDonar | async; then aBlock; else bBlock"
+        ></ng-content>
+        <ng-template #aBlock
+          ><ion-button class="primary" expand="clear" (click)="onUpdate()"
+            >Update</ion-button
+          ></ng-template
+        >
+        <ng-template #bBlock>
+          <ion-button
+            *ngIf="
+              request.requestStatus.desc === 'Submitted' ||
+              request.requestStatus.desc === 'Processing'
+            "
+            class="primary"
+            expand="clear"
+            (click)="onCancel()"
+            >Cancel</ion-button
+          ></ng-template
+        >
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
