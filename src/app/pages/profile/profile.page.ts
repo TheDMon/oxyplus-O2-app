@@ -4,7 +4,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Address } from 'src/app/models/address';
+import { Location } from 'src/app/models/location';
 import { UserService } from 'src/app/pages/login/user.service';
 import { AlertUtil } from '../../alert-utility/alert-utility.util';
 import { Role } from '../../models/role';
@@ -48,8 +48,8 @@ export class ProfilePage implements OnInit {
     console.log('profile page', this.user);
   }
 
-  onLocationChange(address: Address) {
-    this.user.address = address;
+  onLocationChange(location: Location) {
+    this.user.location = location;
   }
 
   getRoles() {

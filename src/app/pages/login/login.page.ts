@@ -8,6 +8,7 @@ import { UserService } from 'src/app/pages/login/user.service';
 import { User } from '../../models/user';
 import { from } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { AlertUtil } from 'src/app/alert-utility/alert-utility.util';
 
 @Component({
   selector: 'app-login',
@@ -23,7 +24,8 @@ export class LoginPage implements OnInit {
     private fireAuth: AngularFireAuth,
     private router: Router,
     private http: HttpClient,
-    private userService: UserService
+    private userService: UserService,
+    private alertUtil: AlertUtil
   ) {}
 
   ngOnInit() {
@@ -39,10 +41,10 @@ export class LoginPage implements OnInit {
     });
   }
 
-  async onSubmit(){
-    if(this.isLogin){
+  async onSubmit() {
+    if (this.isLogin) {
       this.loginWithEmail();
-    } else{
+    } else {
       this.registerWithEmail();
     }
     this.form.reset();
@@ -53,23 +55,34 @@ export class LoginPage implements OnInit {
       return;
     }
 
-    const authCallObs = from(this.fireAuth.auth.signInWithEmailAndPassword(
-      this.form.value.email,
-      this.form.value.password
-    )).pipe(
-      switchMap(authData => this.userService.loadUserProfile(authData.user.email)),
-      switchMap(users => this.userService.loggedInUser)
+    const authCallObs = from(
+      this.fireAuth.auth.signInWithEmailAndPassword(
+        this.form.value.email,
+        this.form.value.password
+      )
+    ).pipe(
+      switchMap((authData) => this.userService.loadUserProfile(authData.user.email)
+      ),
+      switchMap((users) => this.userService.loggedInUser)
     );
 
     this.showProgess = true;
-    authCallObs.subscribe(user => {
-      if (user) {
-        this.router.navigate(['/', 'discover']);
-      } else {
-        this.router.navigate(['/', 'profile', { type: 'new' }]);
+    authCallObs.subscribe(
+      (user) => {
+        if (user) {
+          this.router.navigate(['/', 'discover']);
+        } else {
+          this.router.navigate(['/', 'profile',{ type: 'new' }]);
+        }
+      },
+      (error) => {
+        this.alertUtil.presentAlert('Failure', '', error);
+        this.showProgess = false;
+      },
+      () => {
+        this.showProgess = false;
       }
-      this.showProgess = false;
-    });
+    );
   }
 
   async registerWithEmail() {
@@ -87,7 +100,7 @@ export class LoginPage implements OnInit {
         console.log('registration failed');
       }
     } catch (error) {
-      alert(error);
+      this.alertUtil.presentAlert('Failure', '', error);
       this.showProgess = false;
     }
   }

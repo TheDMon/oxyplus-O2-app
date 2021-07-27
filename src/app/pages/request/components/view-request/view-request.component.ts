@@ -44,11 +44,11 @@ export class ViewRequestComponent implements OnInit  {
     assignRequest(request: Request){
         this.requestService.requestStatusList().toPromise().then(data => {
             request.requestStatus = data.find(x => x.desc === 'Processing');
-            request.assignedTo = this.user._id;
+            request.assignedTo = this.user;
             this.requestService.updateRequest(request)
                     .subscribe({
                         complete: () => {
-                            this.alertUtil.presentToast('You has been assigned');
+                            this.alertUtil.presentToast('Your request has been assigned');
                             this.getSubmittedRequests();
                         },
                         error: (err) => { this.alertUtil.presentAlert('Error','An error occurred',`Error details: ${JSON.stringify(err)}`);}

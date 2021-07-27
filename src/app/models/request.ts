@@ -1,15 +1,17 @@
-import { Address } from './address';
+import { Location } from './location';
 import { User } from './user';
 
 export class Request {
     _id: string;
     submittedBy: User;
+    submittedOn: Date;
     requester: string;
-    location: Address;
+    location: Location;
     contact: string;
     requestStatus: RequestStatus;
-    assignedTo: string;
+    assignedTo: User;
     updatedBy: User;
+    updatedOn: Date;
     followUpRequired: boolean;
     distance: number;
 }

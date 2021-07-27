@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { NavController } from '@ionic/angular';
 import { switchMap, take } from 'rxjs/operators';
 
-import { Address } from '../../../models/address';
+import { Location } from '../../../models/location';
 import { Request } from '../../../models/request';
 import { RequestService } from '../../../pages/request/request.service';
 import { UserService } from '../../../pages/login/user.service';
@@ -17,7 +17,7 @@ import { User } from '../../../models/user';
 })
 export class NewRequestPage implements OnInit {
   form: FormGroup;
-  location: Address;
+  location: Location;
   currentUser: User;
   request: User;
 
@@ -31,14 +31,14 @@ export class NewRequestPage implements OnInit {
   ngOnInit() {
     this.userService.loggedInUser.pipe(take(1)).subscribe((user) => {
       this.currentUser = user;
-      this.location = user.address;
+      this.location = user.location;
 
       this.form = new FormGroup({
         requester: new FormControl(user.name, {
           updateOn: 'blur',
           validators: [Validators.required],
         }),
-        location: new FormControl(user.address, {
+        location: new FormControl(user.location, {
           updateOn: 'blur',
           validators: [Validators.required],
         }),
@@ -50,8 +50,8 @@ export class NewRequestPage implements OnInit {
     });
   }
 
-  onLocationChange(addr: Address) {
-    this.form.value.location = addr;
+  onLocationChange(location: Location) {
+    this.form.value.location = location;
   }
 
   onBehalfChanged(event: any){
@@ -60,13 +60,13 @@ export class NewRequestPage implements OnInit {
       this.form.get('requester').setValue(null);
       this.form.get('location').setValue(null);
       this.form.get('contact').setValue(null);
-      this.location = new Address();
+      this.location = new Location();
     } else{
       console.log('setting user values since value is : ', event.detail.checked);
       this.form.get('requester').setValue(this.currentUser.name);
-      this.form.get('location').setValue(this.currentUser.address);
+      this.form.get('location').setValue(this.currentUser.location);
       this.form.get('contact').setValue( this.currentUser.mobile);
-      this.location = this.currentUser.address;
+      this.location = this.currentUser.location;
     }
   }
 

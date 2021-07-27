@@ -1,4 +1,4 @@
-import { Address } from './address';
+import { Location } from './location';
 import { Role } from './role';
 
 export class User {
@@ -6,7 +6,7 @@ export class User {
     email: string;
     name: string;
     mobile: string;
-    address: Address;
+    location: Location;
     role: Role;
     quantity: number;
     distance: number;

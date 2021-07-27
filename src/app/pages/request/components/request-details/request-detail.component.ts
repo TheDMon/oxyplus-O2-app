@@ -6,15 +6,19 @@ import { User } from 'src/app/models/user';
 import { RequestService } from 'src/app/pages/request/request.service';
 import { UserService } from 'src/app/pages/login/user.service';
 import { Request, RequestStatus } from '../../../../models/request';
+import { environment } from '../../../../../environments/environment';
+import { RequestStatusEnum } from '../../../../enum/request-status.enum';
 
 @Component({
   selector: 'app-request-detail',
   templateUrl: './request-detail.component.html',
+  styleUrls: ['./request-detail.component.scss']
 })
 export class RequestDetailComponent implements OnInit {
   @Input() request: Request;
   statusList: RequestStatus[];
   user: User;
+  mapImgUrl: string;
 
   constructor(
     private alertUtil: AlertUtil,
@@ -33,32 +37,38 @@ export class RequestDetailComponent implements OnInit {
       .subscribe((result) => (this.statusList = result));
 
     this.userService.loggedInUser.subscribe((user) => (this.user = user));
+
+    this.mapImgUrl = this.getMapImage(
+      this.request.location.position.lat,
+      this.request.location.position.lng,
+      18
+    );
   }
 
   onUpdate() {
     const header = 'Change Status';
     const buttons = [];
 
-    if (this.request.requestStatus.desc === 'Submitted') {
+    if (this.request.requestStatus.desc === RequestStatusEnum.Submitted) {
       buttons.push({
         text: 'Assign',
         handler: () => {
           // eslint-disable-next-line no-underscore-dangle
-          this.request.assignedTo = this.user._id;
+          this.request.assignedTo = this.user;
           this.updateRequest(
-            this.statusList.find((x) => x.desc === 'Processing')
+            this.statusList.find((x) => x.desc === RequestStatusEnum.Processing)
           );
         },
       });
     }
 
-    if (this.request.requestStatus.desc === 'Processing') {
+    if (this.request.requestStatus.desc === RequestStatusEnum.Processing) {
       buttons.push({
         text: 'Send back to Submitted',
         handler: () => {
           this.request.assignedTo = null;
           this.updateRequest(
-            this.statusList.find((x) => x.desc === 'Submitted')
+            this.statusList.find((x) => x.desc === RequestStatusEnum.Submitted)
           );
         },
       });
@@ -68,7 +78,7 @@ export class RequestDetailComponent implements OnInit {
         handler: () => {
           this.request.followUpRequired = true;
           this.updateRequest(
-            this.statusList.find((x) => x.desc === 'Resolved')
+            this.statusList.find((x) => x.desc === RequestStatusEnum.Resolved)
           );
         },
       });
@@ -77,14 +87,14 @@ export class RequestDetailComponent implements OnInit {
         text: 'Rejected',
         handler: () => {
           this.updateRequest(
-            this.statusList.find((x) => x.desc === 'Rejected')
+            this.statusList.find((x) => x.desc === RequestStatusEnum.Rejected)
           );
         },
       });
     }
 
     if (
-      this.request.requestStatus.desc === 'Resolved' &&
+      this.request.requestStatus.desc === RequestStatusEnum.Resolved &&
       this.request.followUpRequired
     ) {
       buttons.push({
@@ -92,7 +102,7 @@ export class RequestDetailComponent implements OnInit {
         handler: () => {
           this.request.followUpRequired = false;
           this.updateRequest(
-            this.statusList.find((x) => x.desc === 'Resolved')
+            this.statusList.find((x) => x.desc === RequestStatusEnum.Resolved)
           );
         },
       });
@@ -120,6 +130,13 @@ export class RequestDetailComponent implements OnInit {
   }
 
   onCancel() {
-    this.updateRequest(this.statusList.find((x) => x.desc === 'Cancelled'));
+    this.updateRequest(this.statusList.find((x) => x.desc === RequestStatusEnum.Cancelled));
+  }
+
+  private getMapImage(lat: number, lng: number, zoom: number) {
+    console.log(lat, lng);
+    return `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=${zoom}&size=500x300&maptype=roadmap
+    &markers=color:red%7Clabel:Place%7C${lat},${lng}
+    &key=${environment.googleMapsAPIKey}`;
   }
 }

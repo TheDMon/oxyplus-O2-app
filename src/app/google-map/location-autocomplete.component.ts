@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
-import { Address } from '../models/address';
+import { Location } from '../models/location';
 
 declare let google: any;
 
@@ -9,25 +9,25 @@ declare let google: any;
   styleUrls: ['./location-autocomplete.component.scss'],
 })
 export class LocationAutocompleteComponent implements OnInit, OnChanges {
-  @Input() address: Address;
+  @Input() location: Location;
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
-  @Output() onChange = new EventEmitter<Address>();
+  @Output() onChange = new EventEmitter<Location>();
   addressText: string;
 
   constructor() { }
 
   ngOnInit() {
-    if(!this.address) {
-      this.address = new Address();
+    if(!this.location) {
+      this.location = new Location();
     }
 
-    this.addressText = this.address.text;
+    this.addressText = this.location.address;
 
     this.bindGoogleAutocomplete();
   }
 
   ngOnChanges(){
-    this.addressText = this.address.text; // let's change address if parent component sends a different one
+    this.addressText = this.location?.address; // let's change address if parent component sends a different one
   }
 
   bindGoogleAutocomplete(){
@@ -61,7 +61,7 @@ export class LocationAutocompleteComponent implements OnInit, OnChanges {
           const place = autocomplete.getPlace();
 
           if (place.geometry){
-            this.address.location = {
+            this.location.position = {
               lat: place.geometry.location.lat(),
               lng: place.geometry.location.lng()
             };
@@ -72,12 +72,12 @@ export class LocationAutocompleteComponent implements OnInit, OnChanges {
             });
 
             addressText = addressText.substr(2, addressText.length);
-            this.address.text = addressText;
+            this.location.address = addressText;
           } else{
-            this.address = null;
+            this.location = null;
           }
-          console.log('selected location:', this.address);
-          this.onChange.emit(this.address);
+          console.log('selected location:', this.location);
+          this.onChange.emit(this.location);
         });
 
     });

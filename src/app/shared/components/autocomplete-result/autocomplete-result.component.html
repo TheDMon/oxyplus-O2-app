@@ -1,0 +1,6 @@
+<ion-list>
+  <ion-item *ngFor="let item of autocompleteResult" class="ion-no-padding">
+    <ion-icon name="location" slot="start" size="small"></ion-icon>
+    <ion-label class="ion-text-wrap"><p>{{ item.description }}</p></ion-label>
+  </ion-item>
+</ion-list>

@@ -76,17 +76,17 @@ export class DiscoverMapPage implements OnInit, OnDestroy {
     this.discoverService.findDonors().subscribe((donors) => {
       const markers = donors
         .filter(
-          (x) => x.address !== undefined && x.address.location !== undefined
+          (x) => x.location !== undefined && x.location.position !== undefined
         )
         .map((x) => {
           const infoWin = new MapInfoWindow();
           infoWin.title = `${x.name}`;
-          infoWin.addressText = x.address.text;
+          infoWin.addressText = x.location.address;
           infoWin.mobile = x.mobile;
 
           const m = new MapMarker();
           m.title = `${x.name}`;
-          m.position = x.address.location;
+          m.position = x.location.position;
           m.infoWin = infoWin;
 
           return m;
@@ -101,18 +101,18 @@ export class DiscoverMapPage implements OnInit, OnDestroy {
     this.discoverService.findSubmittedRequests().subscribe((requests) => {
       const markers = requests
         .filter(
-          (x) => x.location !== undefined && x.location.location !== undefined
+          (x) => x.location !== undefined && x.location.position !== undefined
         )
         .map((x) => {
           const infoWin = new MapInfoWindow();
           infoWin.title = x.requester;
-          infoWin.addressText = x.location.text;
+          infoWin.addressText = x.location.address;
           infoWin.mobile = x.contact;
           //infoWin.email = x.contact;
 
           const m = new MapMarker();
           m.title = x.requester;
-          m.position = x.location.location;
+          m.position = x.location.position;
           m.infoWin = infoWin;
 
           return m;
