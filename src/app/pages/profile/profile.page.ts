@@ -40,7 +40,13 @@ export class ProfilePage implements OnInit {
 
   ngOnInit() {
     this.getRoles();
-    this.userService.loggedInUser.subscribe((user) => (this.user = user));
+    this.userService.loggedInUser.subscribe((user) => {
+      if(user){
+        this.user = user;
+      } else {
+        this.user = new User();
+      }
+    });
     if (this.user.role !== undefined) {
       // eslint-disable-next-line no-underscore-dangle
       this.selectedRoleID = this.user.role._id;

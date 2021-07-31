@@ -1,12 +1,9 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { map, switchMap, take, tap } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 
 import { MapInfoWindow } from 'src/app/models/map-infowindow';
 import { MapMarker } from 'src/app/models/map-marker';
-import { Request } from 'src/app/models/request';
-import { User } from 'src/app/models/user';
 import { UserService } from 'src/app/pages/login/user.service';
 import { MapMyIndiaComponent } from 'src/app/shared/map-my-india/map-my-india.component';
 import { DiscoverService } from '../discover.service';
@@ -24,7 +21,6 @@ export class DiscoverMapPage implements OnInit, OnDestroy {
 
   constructor(
     private userService: UserService,
-    private http: HttpClient,
     private discoverService: DiscoverService
   ) {}
 
@@ -47,11 +43,11 @@ export class DiscoverMapPage implements OnInit, OnDestroy {
   }
 
   onMapLoadCompleted(e: any) {
-    if (this.isDonor) {
-      this.findRequests();
-    } else {
-      this.findDonars();
-    }
+    // if (this.isDonor) {
+    //   this.findRequests();
+    // } else {
+    //   this.findDonars();
+    // }
 
     this.loadMapData();
   }

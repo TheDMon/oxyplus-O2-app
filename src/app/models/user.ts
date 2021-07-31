@@ -1,5 +1,6 @@
 import { Location } from './location';
 import { Role } from './role';
+import { SubscriptionDetails } from './subscription-details';
 
 export class User {
     _id: string;
@@ -10,4 +11,5 @@ export class User {
     role: Role;
     quantity: number;
     distance: number;
+    subscriptionDetails: SubscriptionDetails;
 }

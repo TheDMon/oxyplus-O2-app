@@ -2,16 +2,19 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, of, throwError } from 'rxjs';
-import { map, take, tap } from 'rxjs/operators';
+import { map, switchMap, take, tap } from 'rxjs/operators';
 
 import { ApiResponse } from 'src/app/models/api-response';
+import { SubscriptionDetails } from 'src/app/models/subscription-details';
+import { environment } from 'src/environments/environment';
 import { User } from '../../models/user';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
-  apiBaseUrl = 'http://localhost:3000';
+  apiBaseUrl = environment.apiBaseUrl;
   userAccessKey = 'USER_ACCESS_KEY';
   private _user = new BehaviorSubject<User>(null);
+  private _userProfileCompleted = false;
 
   constructor(private http: HttpClient) {}
 
@@ -25,6 +28,10 @@ export class UserService {
         }
       })
     );
+  }
+
+  get isProfileComplete() {
+    return this._userProfileCompleted;
   }
 
   get loggedInUser() {
@@ -44,19 +51,26 @@ export class UserService {
   }
 
   loadUserProfile(email: string) {
-    return this.http.get<User[]>(`${this.apiBaseUrl}/oxyplus/user/${email}`).pipe(
-      tap((users) => {
-        this._user.next(users[0]);
+    return this.http
+      .get<User[]>(`${this.apiBaseUrl}/oxyplus/user/${email}`)
+      .pipe(
+        tap((users) => {
+          if (users) {
+            this._userProfileCompleted = true;
+            this._user.next(users[0]);
 
-        // remove item if present
-        if (localStorage.getItem(this.userAccessKey)) {
-          localStorage.removeItem(this.userAccessKey);
-        }
+            // remove item if present
+            if (localStorage.getItem(this.userAccessKey)) {
+              localStorage.removeItem(this.userAccessKey);
+            }
 
-        // add item to storage
-        localStorage.setItem(this.userAccessKey, JSON.stringify(users[0]));
-      })
-    );
+            // add item to storage
+            localStorage.setItem(this.userAccessKey, JSON.stringify(users[0]));
+          } else {
+            this._userProfileCompleted = false;
+          }
+        })
+      );
   }
 
   createUserProfile(user: User) {
@@ -91,8 +105,9 @@ export class UserService {
 
   autoLogin() {
     let isUserPresent = false;
-    if (localStorage.getItem(this.userAccessKey)) {
-      this._user.next(JSON.parse(localStorage.getItem(this.userAccessKey)));
+    const storedUser = localStorage.getItem(this.userAccessKey);
+    if (storedUser && storedUser !== 'undefined') {
+      this._user.next(JSON.parse(storedUser));
       isUserPresent = true;
     } else {
       isUserPresent = false;
@@ -107,6 +122,18 @@ export class UserService {
       localStorage.removeItem(this.userAccessKey);
     }
 
+    console.log(localStorage.getItem(this.userAccessKey));
+
+    this._userProfileCompleted = false;
     this._user.next(null);
+  }
+
+  updateSubscriptionDetails(subscriptionDetails: SubscriptionDetails) {
+    return this.loggedInUser.pipe(take(1),
+      switchMap(user => {
+        user.subscriptionDetails = subscriptionDetails;
+        return this.updateUserProfile(user);
+      })
+    );
   }
 }

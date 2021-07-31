@@ -1,0 +1,19 @@
+ion-card {
+  border-radius: 20px;
+  width: 100%;
+  --box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.6)
+
+  .item-style {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding: 0px;
+  }
+
+  ion-icon {
+    margin-right: 10px;
+  }
+
+  .item-inner {
+    border: none;
+  }
+}

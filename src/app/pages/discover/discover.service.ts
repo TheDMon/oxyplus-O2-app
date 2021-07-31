@@ -6,12 +6,13 @@ import { switchMap, take, tap } from 'rxjs/operators';
 import { Request } from 'src/app/models/request';
 import { User } from 'src/app/models/user';
 import { UserService } from 'src/app/pages/login/user.service';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DiscoverService {
-  apiBaseUrl = 'http://localhost:3000';
+  apiBaseUrl = environment.apiBaseUrl;
   private _discoveredRequests = new BehaviorSubject<Request[]>([]);
   private _discoveredDonors = new BehaviorSubject<User[]>([]);
   private _distance = new BehaviorSubject<number>(10);

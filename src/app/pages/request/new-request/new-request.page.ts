@@ -9,6 +9,7 @@ import { RequestService } from '../../../pages/request/request.service';
 import { UserService } from '../../../pages/login/user.service';
 import { AlertUtil } from '../../../alert-utility/alert-utility.util';
 import { User } from '../../../models/user';
+import { RequestStatusEnum } from 'src/app/enum/request-status.enum';
 
 @Component({
   selector: 'app-new-request',
@@ -38,10 +39,6 @@ export class NewRequestPage implements OnInit {
           updateOn: 'blur',
           validators: [Validators.required],
         }),
-        location: new FormControl(user.location, {
-          updateOn: 'blur',
-          validators: [Validators.required],
-        }),
         contact: new FormControl(user.mobile, {
           updateOn: 'blur',
           validators: [Validators.required],
@@ -51,27 +48,25 @@ export class NewRequestPage implements OnInit {
   }
 
   onLocationChange(location: Location) {
-    this.form.value.location = location;
+    this.location = location;
   }
 
   onBehalfChanged(event: any){
     if(event.detail.checked){
       console.log('setting null since value is : ', event.detail.checked);
       this.form.get('requester').setValue(null);
-      this.form.get('location').setValue(null);
       this.form.get('contact').setValue(null);
       this.location = new Location();
     } else{
       console.log('setting user values since value is : ', event.detail.checked);
       this.form.get('requester').setValue(this.currentUser.name);
-      this.form.get('location').setValue(this.currentUser.location);
       this.form.get('contact').setValue( this.currentUser.mobile);
       this.location = this.currentUser.location;
     }
   }
 
   addRequest() {
-    if(!this.form.value){
+    if(!this.form.valid || !this.location.position){
       return;
     }
 
@@ -82,10 +77,10 @@ export class NewRequestPage implements OnInit {
         switchMap((statusList) => {
           const newRequest = new Request();
           newRequest.requester = this.form.value.requester;
-          newRequest.location = this.form.value.location;
+          newRequest.location = this.location;
           newRequest.contact = this.form.value.contact;
           newRequest.requestStatus = statusList.find(
-            (x) => x.desc === 'Submitted'
+            (x) => x.desc === RequestStatusEnum.Submitted
           );
 
           return this.requestService.createRequest(newRequest);

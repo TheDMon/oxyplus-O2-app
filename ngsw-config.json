@@ -1,0 +1,49 @@
+{
+  "$schema": "./node_modules/@angular/service-worker/config/schema.json",
+  "index": "/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "resources": {
+        "files": [
+          "/favicon.ico",
+          "/index.html",
+          "/manifest.webmanifest",
+          "/*.css",
+          "/*.js"
+        ]
+      }
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": [
+          "/assets/**",
+          "/*.(eot|svg|cur|jpg|png|webp|gif|otf|ttf|woff|woff2|ani)"
+        ],
+        "urls": [
+          "https://unpkg.com/leaflet@1.7.1/**",
+          "https://maps.mapmyindia.com/**"
+        ]
+      }
+    }
+  ],
+  "dataGroups": [
+    {
+      "name": "data",
+      "urls": [
+        "http://127.0.0.1:8080/svg/**",
+        "http://localhost:3000/**"
+      ],
+      "cacheConfig": {
+        "maxSize": 5,
+        "maxAge": "12h",
+        "timeOut": "5s",
+        "strategy": "freshness"
+      }
+    }
+  ]
+}

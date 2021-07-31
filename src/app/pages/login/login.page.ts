@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { AngularFireAuth } from '@angular/fire/auth';
 import { UserService } from 'src/app/pages/login/user.service';
-import { User } from '../../models/user';
 import { from } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { AlertUtil } from 'src/app/alert-utility/alert-utility.util';
@@ -23,7 +21,6 @@ export class LoginPage implements OnInit {
   constructor(
     private fireAuth: AngularFireAuth,
     private router: Router,
-    private http: HttpClient,
     private userService: UserService,
     private alertUtil: AlertUtil
   ) {}
@@ -72,8 +69,9 @@ export class LoginPage implements OnInit {
         if (user) {
           this.router.navigate(['/', 'discover']);
         } else {
-          this.router.navigate(['/', 'profile',{ type: 'new' }]);
+          this.router.navigate(['/', 'profile', { type: 'new' }]);
         }
+        this.showProgess = false;
       },
       (error) => {
         this.alertUtil.presentAlert('Failure', '', error);

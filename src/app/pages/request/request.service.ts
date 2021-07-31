@@ -5,13 +5,14 @@ import { BehaviorSubject, throwError } from 'rxjs';
 import { switchMap, take, tap } from 'rxjs/operators';
 
 import { ApiResponse } from 'src/app/models/api-response';
+import { environment } from 'src/environments/environment';
 import { Request, RequestStatus } from '../../models/request';
 import { DiscoverService } from '../discover/discover.service';
 import { UserService } from '../login/user.service';
 
 @Injectable({ providedIn: 'root' })
 export class RequestService {
-  apiBaseUrl = 'http://localhost:3000';
+  apiBaseUrl = environment.apiBaseUrl;
   private _myRequests = new BehaviorSubject<Request[]>([]);
 
   constructor(

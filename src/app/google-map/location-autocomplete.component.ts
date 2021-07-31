@@ -31,7 +31,7 @@ export class LocationAutocompleteComponent implements OnInit, OnChanges {
   }
 
   bindGoogleAutocomplete(){
-    const center = { lat: 50.064192, lng: -130.605469 };
+    const center = { lat: 50.064192, lng: -130.605469 }; //dummy center
 
     navigator.geolocation.getCurrentPosition(pos => {
        center.lat = pos.coords.latitude;
