@@ -9,25 +9,34 @@ import { SubscriptionDetails } from 'src/app/models/subscription-details';
 import { environment } from 'src/environments/environment';
 import { User } from '../../models/user';
 
+interface UserData {
+  email: string;
+  accessToken: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class UserService {
   apiBaseUrl = environment.apiBaseUrl;
   userAccessKey = 'USER_ACCESS_KEY';
   private _user = new BehaviorSubject<User>(null);
   private _userProfileCompleted = false;
+  private _accessToken = new BehaviorSubject<string>(null);
 
   constructor(private http: HttpClient) {}
 
   get isAuthenticated() {
-    return this._user.asObservable().pipe(
-      map((user) => {
-        if (user) {
-          return true;
-        } else {
-          return false;
-        }
-      })
-    );
+    return this._accessToken
+      .asObservable()
+      .pipe(map((accessToken) => !!accessToken));
+    // return this._user.asObservable().pipe(
+    //   map((user) => {
+    //     if (user) {
+    //       return true;
+    //     } else {
+    //       return false;
+    //     }
+    //   })
+    // );
   }
 
   get isProfileComplete() {
@@ -50,6 +59,35 @@ export class UserService {
     );
   }
 
+  registerAccount(email: string, password: string) {
+    return this.http.post(`${this.apiBaseUrl}/auth/register`, {
+      email,
+      password,
+    });
+  }
+
+  login(email: string, password: string) {
+    return this.http
+      .post(`${this.apiBaseUrl}/auth/login`, { email, password })
+      .pipe(
+        tap((authResponse: any) => {
+          const userData: UserData = {
+            email,
+            accessToken: authResponse.accessToken,
+          };
+
+          this._accessToken.next(authResponse.accessToken);
+          // remove item if present
+          if (localStorage.getItem(this.userAccessKey)) {
+            localStorage.removeItem(this.userAccessKey);
+          }
+
+          // add item to storage
+          localStorage.setItem(this.userAccessKey, JSON.stringify(userData));
+        })
+      );
+  }
+
   loadUserProfile(email: string) {
     return this.http
       .get<User[]>(`${this.apiBaseUrl}/oxyplus/user/${email}`)
@@ -58,14 +96,6 @@ export class UserService {
           if (users) {
             this._userProfileCompleted = true;
             this._user.next(users[0]);
-
-            // remove item if present
-            if (localStorage.getItem(this.userAccessKey)) {
-              localStorage.removeItem(this.userAccessKey);
-            }
-
-            // add item to storage
-            localStorage.setItem(this.userAccessKey, JSON.stringify(users[0]));
           } else {
             this._userProfileCompleted = false;
           }
@@ -104,16 +134,19 @@ export class UserService {
   }
 
   autoLogin() {
-    let isUserPresent = false;
-    const storedUser = localStorage.getItem(this.userAccessKey);
-    if (storedUser && storedUser !== 'undefined') {
-      this._user.next(JSON.parse(storedUser));
-      isUserPresent = true;
+    const userData: UserData = JSON.parse(
+      localStorage.getItem(this.userAccessKey)
+    );
+    if (userData) {
+      // if userData.token expires, need to generate new token from server using refresh token
+      // TO DO::
+      this._accessToken.next(userData.accessToken);
+      return this.loadUserProfile(userData.email).pipe(
+        map((users) => !!users)
+      );
     } else {
-      isUserPresent = false;
+      return of(false);
     }
-
-    return of(isUserPresent);
   }
 
   logout() {
@@ -124,13 +157,15 @@ export class UserService {
 
     console.log(localStorage.getItem(this.userAccessKey));
 
+    this._accessToken.next(null);
     this._userProfileCompleted = false;
-    this._user.next(null);
+    //this._user.next(null);
   }
 
   updateSubscriptionDetails(subscriptionDetails: SubscriptionDetails) {
-    return this.loggedInUser.pipe(take(1),
-      switchMap(user => {
+    return this.loggedInUser.pipe(
+      take(1),
+      switchMap((user) => {
         user.subscriptionDetails = subscriptionDetails;
         return this.updateUserProfile(user);
       })

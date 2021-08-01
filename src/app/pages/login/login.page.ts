@@ -2,9 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
-import { AngularFireAuth } from '@angular/fire/auth';
 import { UserService } from 'src/app/pages/login/user.service';
-import { from } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { AlertUtil } from 'src/app/alert-utility/alert-utility.util';
 
@@ -19,7 +17,6 @@ export class LoginPage implements OnInit {
   isLogin = true;
 
   constructor(
-    private fireAuth: AngularFireAuth,
     private router: Router,
     private userService: UserService,
     private alertUtil: AlertUtil
@@ -44,7 +41,6 @@ export class LoginPage implements OnInit {
     } else {
       this.registerWithEmail();
     }
-    this.form.reset();
   }
 
   async loginWithEmail() {
@@ -52,16 +48,14 @@ export class LoginPage implements OnInit {
       return;
     }
 
-    const authCallObs = from(
-      this.fireAuth.auth.signInWithEmailAndPassword(
-        this.form.value.email,
-        this.form.value.password
-      )
-    ).pipe(
-      switchMap((authData) => this.userService.loadUserProfile(authData.user.email)
-      ),
-      switchMap((users) => this.userService.loggedInUser)
-    );
+    const { email, password } = this.form.value;
+
+    const authCallObs = this.userService
+      .login(email, password)
+      .pipe(
+        switchMap(() => this.userService.loadUserProfile(email)),
+        switchMap(() => this.userService.loggedInUser)
+      );
 
     this.showProgess = true;
     authCallObs.subscribe(
@@ -71,10 +65,11 @@ export class LoginPage implements OnInit {
         } else {
           this.router.navigate(['/', 'profile', { type: 'new' }]);
         }
+        this.form.reset();
         this.showProgess = false;
       },
-      (error) => {
-        this.alertUtil.presentAlert('Failure', '', error);
+      (err) => {
+        this.alertUtil.presentAlert('Failure', '', err.error.message);
         this.showProgess = false;
       },
       () => {
@@ -84,23 +79,16 @@ export class LoginPage implements OnInit {
   }
 
   async registerWithEmail() {
-    try {
-      this.showProgess = true;
-      const response = await this.fireAuth.auth.createUserWithEmailAndPassword(
-        this.form.value.email,
-        this.form.value.password
-      );
-      this.showProgess = false;
-
-      if (response.user.email) {
-        console.log('success');
-      } else {
-        console.log('registration failed');
-      }
-    } catch (error) {
-      this.alertUtil.presentAlert('Failure', '', error);
-      this.showProgess = false;
-    }
+    this.showProgess = true;
+    this.userService.registerAccount(this.form.value.email,
+      this.form.value.password).toPromise().then(() => {
+        this.alertUtil.presentToast('Registration successful! Please switch to login view to login');
+        this.form.reset();
+        this.showProgess = false;
+      }).catch(err => {
+        this.alertUtil.presentAlert('Failure', '', err.error.message);
+        this.showProgess = false;
+      });
   }
 
   onSwitchAuthMode() {

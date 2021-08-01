@@ -43,8 +43,8 @@
     <ion-input [(ngModel)]="user.quantity" placeholder="enter no of cylinder" type="number"></ion-input>
     <ion-icon name="cart-outline" slot="start"></ion-icon>
   </ion-item>
-  <section>
-    <ion-button *ngIf="isNewProfile" expand="full" (click)="createProfile()">Create</ion-button>
-    <ion-button *ngIf="!isNewProfile" expand="full" (click)="updateProfile()">Update</ion-button>
+  <section class="ion-text-center">
+    <ion-button *ngIf="isNewProfile" (click)="createProfile()">Create</ion-button>
+    <ion-button *ngIf="!isNewProfile" (click)="updateProfile()">Update</ion-button>
   </section>
 </ion-content>
