@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "428040292477",
+    "project_id": "oxyplus-5a969",
+    "storage_bucket": "oxyplus-5a969.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:428040292477:android:ce21ae2280b928bbb74914",
+        "android_client_info": {
+          "package_name": "com.ibm.oxyplus"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "428040292477-juncmrlnv6kjli191i7n5rg044nb32h7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAoKjrg7M7ZpKX68_FJrJvtxIHNCUmoeOI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "428040292477-juncmrlnv6kjli191i7n5rg044nb32h7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
