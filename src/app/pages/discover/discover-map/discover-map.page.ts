@@ -5,6 +5,7 @@ import { map, take } from 'rxjs/operators';
 import { MapInfoWindow } from 'src/app/models/map-infowindow';
 import { MapMarker } from 'src/app/models/map-marker';
 import { UserService } from 'src/app/pages/login/user.service';
+import { GoogleMapComponent } from '../../../shared/google-map/google-map.component';
 import { MapMyIndiaComponent } from 'src/app/shared/map-my-india/map-my-india.component';
 import { DiscoverService } from '../discover.service';
 
@@ -14,7 +15,7 @@ import { DiscoverService } from '../discover.service';
   styleUrls: ['./discover-map.page.scss'],
 })
 export class DiscoverMapPage implements OnInit, OnDestroy {
-  @ViewChild(MapMyIndiaComponent) map: MapMyIndiaComponent;
+  @ViewChild(GoogleMapComponent) map: GoogleMapComponent;
   isDonor = false;
   distance: number;
   subscriptions: Subscription[] = [];

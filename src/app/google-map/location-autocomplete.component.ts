@@ -1,3 +1,4 @@
+import { AfterViewInit } from '@angular/core';
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { Location } from '../models/location';
 
@@ -8,7 +9,7 @@ declare let google: any;
   templateUrl: './location-autocomplete.component.html',
   styleUrls: ['./location-autocomplete.component.scss'],
 })
-export class LocationAutocompleteComponent implements OnInit, OnChanges {
+export class LocationAutocompleteComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() location: Location;
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   @Output() onChange = new EventEmitter<Location>();
@@ -17,6 +18,10 @@ export class LocationAutocompleteComponent implements OnInit, OnChanges {
   constructor() { }
 
   ngOnInit() {
+
+  }
+
+  ngAfterViewInit() {
     if(!this.location) {
       this.location = new Location();
     }

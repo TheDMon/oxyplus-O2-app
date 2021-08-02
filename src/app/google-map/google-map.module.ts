@@ -11,6 +11,6 @@ import { LocationAutocompleteComponent } from './location-autocomplete.component
       CommonModule,
       FormsModule
     ],
-    exports: [GoogleMapComponent, LocationAutocompleteComponent]
+    exports: [LocationAutocompleteComponent]
   })
   export class GoogleMapModule {}
