@@ -1,6 +1,6 @@
 {
 	"appId": "com.ibm.oxyplus",
-	"appName": "oxyplus-app",
+	"appName": "Oxyplus",
 	"webDir": "www",
 	"bundledWebRuntime": false
 }

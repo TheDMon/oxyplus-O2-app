@@ -49,15 +49,10 @@
 
   <!-- Requester view below -->
 
-  <ion-grid class="ion-no-padding" *ngIf="!isDonor && donors.length > 0">
-    <ion-row>
+  <ion-grid *ngIf="!isDonor && donors.length > 0">
+    <ion-row *ngFor="let donor of donors">
       <ion-col size-md="6" offset-md="3">
-        <ion-item
-          *ngFor="let donor of donors"
-          class="ion-no-padding"
-          color="secondary"
-        >
-          <ion-card color="primary">
+          <ion-card class="ion-no-margin">
             <ion-card-header>
               <ion-card-subtitle>
                 {{donor.distance?.toFixed(2) }} KM
@@ -65,19 +60,19 @@
               <ion-card-title>{{ donor.name }}</ion-card-title>
             </ion-card-header>
             <ion-card-content class="ion-no-padding">
-              <ion-item class="item-style" color="primary">
+              <ion-item class="item-style">
                 <ion-label class="ion-no-margin ion-no-padding">
                   <p>{{ donor.mobile }}</p>
                 </ion-label>
                 <ion-icon name="call" slot="start" size="small"></ion-icon>
               </ion-item>
-              <ion-item class="item-style" color="primary">
+              <ion-item class="item-style">
                 <ion-label class="ion-no-margin ion-no-padding">
                   <p>{{ donor.email }}</p>
                 </ion-label>
                 <ion-icon name="mail" slot="start" size="small"></ion-icon>
               </ion-item>
-              <ion-item class="item-style" color="primary">
+              <ion-item class="item-style">
                 <ion-label
                   class="ion-text-wrap ion-no-margin ion-no-padding"
 
@@ -88,7 +83,6 @@
               </ion-item>
             </ion-card-content>
           </ion-card>
-        </ion-item>
       </ion-col>
     </ion-row>
   </ion-grid>

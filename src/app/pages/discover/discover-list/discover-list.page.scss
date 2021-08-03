@@ -1,19 +1,16 @@
 ion-card {
   border-radius: 20px;
   width: 100%;
-  --box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.6)
+  --box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.6);
+  --padding-bottom: 10px;
+}
 
-  .item-style {
-    margin-top: 0px;
-    margin-bottom: 0px;
-    padding: 0px;
-  }
-
-  ion-icon {
-    margin-right: 10px;
-  }
-
-  .item-inner {
-    border: none;
-  }
+.item-style {
+  --background: transparent;
+  --inner-border-width: 0px;
+  --inner-padding-top: 0px;
+  --inner-padding-bottom: 0px;
+  --min-height: 0px;
+  --padding-bottom: 0px;
+  --padding-top: 0px;
 }

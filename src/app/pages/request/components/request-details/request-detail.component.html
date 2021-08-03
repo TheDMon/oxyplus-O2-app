@@ -1,6 +1,6 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-title>Request Details</ion-title>
+    <ion-title size="small">Request Details</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="onClose()">
         <ion-icon name="close-outline" type="icon-only"></ion-icon>
@@ -9,7 +9,7 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <ion-grid>
+  <ion-grid class="ion-no-padding">
     <ion-row>
       <ion-col>
         <ion-card>
@@ -65,10 +65,32 @@
               <p>{{ request.assignedTo.location.address }}</p>
             </ion-label>
           </ion-item>
+          <ion-item class="ion-text-center">
+            <ng-content
+          *ngIf="isDonar | async; then aBlock; else bBlock"
+        ></ng-content>
+        <ng-template #aBlock
+          ><ion-button class="primary" expand="clear" (click)="onUpdate()"
+            >Update</ion-button
+          ></ng-template
+        >
+        <ng-template #bBlock>
+          <ion-button
+            *ngIf="
+              request.requestStatus.desc === 'Submitted' ||
+              request.requestStatus.desc === 'Processing'
+            "
+            class="primary"
+            expand="clear"
+            (click)="onCancel()"
+            >Cancel</ion-button
+          ></ng-template
+        >
+      </ion-item>
         </ion-card>
       </ion-col>
     </ion-row>
-    <ion-row>
+    <!-- <ion-row>
       <ion-col class="ion-text-center">
         <ng-content
           *ngIf="isDonar | async; then aBlock; else bBlock"
@@ -91,6 +113,6 @@
           ></ng-template
         >
       </ion-col>
-    </ion-row>
+    </ion-row> -->
   </ion-grid>
 </ion-content>
