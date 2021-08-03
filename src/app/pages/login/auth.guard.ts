@@ -8,6 +8,7 @@ import {
 } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { switchMap, take, tap } from 'rxjs/operators';
+
 import { UserService } from 'src/app/pages/login/user.service';
 
 @Injectable({
@@ -24,21 +25,6 @@ export class AuthGuard implements CanActivate {
     | Promise<boolean | UrlTree>
     | boolean
     | UrlTree {
-    // return this.userService.isAuthenticated.pipe(
-    //   take(1),
-    //   switchMap((isAuthenticated) => {
-    //     if (!isAuthenticated) {
-    //       return this.userService.autoLogin();
-    //     } else {
-    //       return of(isAuthenticated);
-    //     }
-    //   }),
-    //   tap((isAuthenticated) => {
-    //     if (!isAuthenticated) {
-    //       this.router.navigate(['/', 'login']);
-    //     }
-    //   })
-    // );
 
     if(this.userService.isProfileComplete){
       return true;

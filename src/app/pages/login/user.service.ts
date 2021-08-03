@@ -1,8 +1,9 @@
 /* eslint-disable no-underscore-dangle */
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, of, throwError } from 'rxjs';
+import { BehaviorSubject, from, of, throwError } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
+import { Storage } from '@capacitor/storage';
 
 import { ApiResponse } from 'src/app/models/api-response';
 import { SubscriptionDetails } from 'src/app/models/subscription-details';
@@ -28,15 +29,6 @@ export class UserService {
     return this._accessToken
       .asObservable()
       .pipe(map((accessToken) => !!accessToken));
-    // return this._user.asObservable().pipe(
-    //   map((user) => {
-    //     if (user) {
-    //       return true;
-    //     } else {
-    //       return false;
-    //     }
-    //   })
-    // );
   }
 
   get isProfileComplete() {
@@ -78,12 +70,17 @@ export class UserService {
 
           this._accessToken.next(authResponse.accessToken);
           // remove item if present
-          if (localStorage.getItem(this.userAccessKey)) {
-            localStorage.removeItem(this.userAccessKey);
-          }
+          Storage.set({
+            key: this.userAccessKey,
+            value: JSON.stringify(userData),
+          });
 
-          // add item to storage
-          localStorage.setItem(this.userAccessKey, JSON.stringify(userData));
+          // if (localStorage.getItem(this.userAccessKey)) {
+          //   localStorage.removeItem(this.userAccessKey);
+          // }
+
+          // // add item to storage
+          // localStorage.setItem(this.userAccessKey, JSON.stringify(userData));
         })
       );
   }
@@ -134,26 +131,25 @@ export class UserService {
   }
 
   autoLogin() {
-    const userData: UserData = JSON.parse(
-      localStorage.getItem(this.userAccessKey)
+    return from(Storage.get({ key: this.userAccessKey })).pipe(
+      switchMap((storedData) => {
+        if (!storedData || !storedData.value) {
+          return of(null);
+        }
+
+        const userData = JSON.parse(storedData.value) as UserData;
+        this._accessToken.next(userData.accessToken);
+        return this.loadUserProfile(userData.email);;
+      }),
+      map((users) => {
+        return users && users.length > 0;
+      })
     );
-    if (userData) {
-      // if userData.token expires, need to generate new token from server using refresh token
-      // TO DO::
-      this._accessToken.next(userData.accessToken);
-      return this.loadUserProfile(userData.email).pipe(
-        map((users) => !!users)
-      );
-    } else {
-      return of(false);
-    }
   }
 
   logout() {
-    // remove item if present
-    if (localStorage.getItem(this.userAccessKey)) {
-      localStorage.removeItem(this.userAccessKey);
-    }
+    // remove item from storage
+    Storage.remove({ key: this.userAccessKey });
 
     console.log(localStorage.getItem(this.userAccessKey));
 

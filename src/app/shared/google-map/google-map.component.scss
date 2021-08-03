@@ -1,3 +1,8 @@
 #map {
     height: 100%;
 }
+
+::ng-deep #infoWindow, .title, .address, .contact {
+  font-family: Arial, Helvetica, sans-serif;
+  color: #242222;
+}

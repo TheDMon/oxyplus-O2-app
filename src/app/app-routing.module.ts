@@ -5,7 +5,7 @@ import { AuthGuard } from './pages/login/auth.guard';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'login',
+    redirectTo: 'discover',
     pathMatch: 'full'
   },
   {
@@ -25,7 +25,7 @@ const routes: Routes = [
   {
     path: 'discover',
     loadChildren: () => import('./pages/discover/discover.module').then( m => m.DiscoverPageModule),
-    canActivate: [AuthGuard ]
+    canActivate: [ AuthGuard ]
   }
 ];
 

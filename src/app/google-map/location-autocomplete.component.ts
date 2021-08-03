@@ -1,5 +1,7 @@
 import { AfterViewInit } from '@angular/core';
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { Geolocation } from '@capacitor/geolocation';
+
 import { Location } from '../models/location';
 
 declare let google: any;
@@ -38,7 +40,7 @@ export class LocationAutocompleteComponent implements OnInit, OnChanges, AfterVi
   bindGoogleAutocomplete(){
     const center = { lat: 50.064192, lng: -130.605469 }; //dummy center
 
-    navigator.geolocation.getCurrentPosition(pos => {
+    Geolocation.getCurrentPosition().then(pos => {
        center.lat = pos.coords.latitude;
        center.lng = pos.coords.longitude;
 

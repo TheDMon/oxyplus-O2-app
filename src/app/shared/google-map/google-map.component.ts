@@ -1,5 +1,7 @@
 import { AfterViewInit, EventEmitter } from '@angular/core';
 import { Component, ElementRef, OnInit, Output, ViewChild } from '@angular/core';
+import { Geolocation } from '@capacitor/geolocation';
+
 import { MapMarker } from 'src/app/models/map-marker';
 
 declare let google: any;
@@ -21,7 +23,7 @@ export class GoogleMapComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
   }
-  
+
   ngAfterViewInit(){
     this.initMap();
   }
@@ -30,7 +32,7 @@ export class GoogleMapComponent implements OnInit, AfterViewInit {
     this.bounds = new google.maps.LatLngBounds();
     if (navigator.geolocation) {
 
-      navigator.geolocation.getCurrentPosition((position) => {
+      Geolocation.getCurrentPosition().then((position) => {
         const pos = {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
