@@ -10,19 +10,17 @@
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
-  <ion-item>
-    <ion-range
-      min="10"
-      max="50"
-      step="5"
-      snaps="true"
-      [(ngModel)]="distance"
-      (ionChange)="onRangeChange()"
-    >
+  <ion-range
+    min="10"
+    max="50"
+    step="5"
+    snaps="true"
+    [(ngModel)]="distance"
+    (ionChange)="onRangeChange()"
+  >
     <ion-label slot="start">10 KM</ion-label>
     <ion-label slot="end">50 KM</ion-label>
-    </ion-range>
-  </ion-item>
+  </ion-range>
 </ion-header>
 
 <ion-content>

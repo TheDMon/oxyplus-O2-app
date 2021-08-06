@@ -3,8 +3,12 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/discover"></ion-back-button>
     </ion-buttons>
-    <ion-title size="small" *ngIf="isNewProfile">Complete your profile</ion-title>
-    <ion-title size="small" *ngIf="!isNewProfile">Update your profile</ion-title>
+    <ion-title size="small" *ngIf="isNewProfile"
+      >Complete your profile</ion-title
+    >
+    <ion-title size="small" *ngIf="!isNewProfile"
+      >Update your profile</ion-title
+    >
   </ion-toolbar>
 </ion-header>
 
@@ -12,39 +16,64 @@
 
 <ion-content>
   <ion-item>
+    <ion-label position="floating">Email</ion-label>
+    <ion-input [(ngModel)]="user.email" disabled=true></ion-input>
+    <ion-icon name="mail" slot="start"></ion-icon>
+  </ion-item>
+  <ion-item>
     <ion-label position="floating">Name</ion-label>
-    <ion-input [(ngModel)]="user.name" placeholder="Enter name"></ion-input>
-    <ion-icon name="person-outline" slot="start"></ion-icon>
+    <ion-input [(ngModel)]="user.name" placeholder="Enter your name"></ion-input>
+    <ion-icon name="person" slot="start"></ion-icon>
   </ion-item>
   <ion-item>
     <ion-label position="floating">Location</ion-label>
-    <app-location-autocomplete
-      style="width: 100%;"
-      [location]="user.location"
-      (onChange)="onLocationChange($event)">
-    </app-location-autocomplete>
-    <!-- <app-google-autocomplete></app-google-autocomplete> -->
-    <ion-icon name="locate-outline" slot="start"></ion-icon>
+    <ion-input (click)="openLocationPicker()" [(ngModel)]="user.location.address" class="ion-text-wrap" ></ion-input>
+    <ion-icon name="locate" slot="start"></ion-icon>
   </ion-item>
   <ion-item>
     <ion-label position="floating">Contact</ion-label>
-    <ion-input [(ngModel)]="user.mobile" placeholder="Enter contact" type="number"></ion-input>
-    <ion-icon name="call-outline" slot="start"></ion-icon>
+    <ion-input
+      [(ngModel)]="user.mobile"
+      placeholder="Enter contact number"
+      type="number"
+    ></ion-input>
+    <ion-icon name="call" slot="start"></ion-icon>
   </ion-item>
   <ion-item *ngIf="roles">
     <ion-label position="floating">Profile Type</ion-label>
-    <ion-select placeholder="Select purpose" [(ngModel)]="selectedRoleID" (ionChange)="checkIfDonor()">
-      <ion-select-option *ngFor="let role of roles" [value]="role._id ">{{ role.name }}</ion-select-option>
+    <ion-select
+      placeholder="Select profile type"
+      [(ngModel)]="selectedRoleID"
+      (ionChange)="profileChosen()"
+    >
+      <ion-select-option *ngFor="let role of roles" [value]="role._id "
+        >{{ role.name }}</ion-select-option
+      >
     </ion-select>
-    <ion-icon name="briefcase-outline" slot="start"></ion-icon>
+    <ion-icon name="briefcase" slot="start"></ion-icon>
   </ion-item>
   <ion-item *ngIf="isDonor">
     <ion-label position="floating">Quantity</ion-label>
-    <ion-input [(ngModel)]="user.quantity" placeholder="enter no of cylinder" type="number"></ion-input>
-    <ion-icon name="cart-outline" slot="start"></ion-icon>
+    <ion-input
+      [(ngModel)]="user.quantity"
+      placeholder="Enter no of cylinders"
+      type="number"
+    ></ion-input>
+    <ion-icon name="cart" slot="start"></ion-icon>
   </ion-item>
-  <section class="ion-text-center">
-    <ion-button *ngIf="isNewProfile" (click)="createProfile()">Create</ion-button>
-    <ion-button *ngIf="!isNewProfile" (click)="updateProfile()">Update</ion-button>
-  </section>
 </ion-content>
+
+<ion-footer>
+  <ion-grid>
+    <ion-row>
+      <ion-col class="ion-text-center">
+        <ion-button *ngIf="isNewProfile" (click)="createProfile()" expand="clear"
+          >Create</ion-button
+        >
+        <ion-button *ngIf="!isNewProfile" (click)="updateProfile()" expand="clear"
+          >Update</ion-button
+        >
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-footer>

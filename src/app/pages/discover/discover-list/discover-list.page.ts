@@ -34,7 +34,6 @@ export class DiscoverListPage implements OnInit, OnDestroy {
     // subscribe requesters
     this.subscriptions.push(
       this.discoverService.discoveredRequests.subscribe((requests) => {
-        console.log('requester subscription from list view');
         this.requests = requests;
       })
     );
@@ -42,7 +41,6 @@ export class DiscoverListPage implements OnInit, OnDestroy {
     // subscribe donors
     this.subscriptions.push(
       this.discoverService.discoveredDonors.subscribe((donors) => {
-        console.log('donor subscription from list view', donors);
         this.donors = donors;
       })
     );

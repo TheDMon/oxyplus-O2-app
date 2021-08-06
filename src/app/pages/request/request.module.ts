@@ -7,7 +7,6 @@ import { IonicModule } from '@ionic/angular';
 import { RequestPageRoutingModule } from './request-routing.module';
 
 import { RequestPage } from './request.page';
-import { GoogleMapModule } from 'src/app/google-map/google-map.module';
 import { RequestDetailComponent } from './components/request-details/request-detail.component';
 
 @NgModule({
@@ -16,7 +15,6 @@ import { RequestDetailComponent } from './components/request-details/request-det
     FormsModule,
     IonicModule,
     RequestPageRoutingModule,
-    GoogleMapModule
   ],
   declarations: [
     RequestPage,

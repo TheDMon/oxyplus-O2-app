@@ -8,7 +8,7 @@ import { DiscoverService } from './discover.service';
   styleUrls: ['./discover.page.scss'],
 })
 export class DiscoverPage implements OnInit {
-  distance = 10;
+  distance = 10; // default distance is 10KM
   isDonor: boolean;
 
   constructor(private discoverService: DiscoverService, private userService: UserService) {}

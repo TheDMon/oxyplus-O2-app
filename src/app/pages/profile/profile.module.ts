@@ -7,7 +7,6 @@ import { IonicModule } from '@ionic/angular';
 import { ProfilePageRoutingModule } from './profile-routing.module';
 
 import { ProfilePage } from './profile.page';
-import { GoogleMapModule } from 'src/app/google-map/google-map.module';
 import { SharedModule } from 'src/app/shared/shared.module';
 
 @NgModule({
@@ -16,7 +15,6 @@ import { SharedModule } from 'src/app/shared/shared.module';
     FormsModule,
     IonicModule,
     ProfilePageRoutingModule,
-    GoogleMapModule,
     SharedModule
   ],
   declarations: [ProfilePage]

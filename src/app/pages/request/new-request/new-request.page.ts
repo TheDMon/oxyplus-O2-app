@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { NavController } from '@ionic/angular';
+import { ModalController, NavController } from '@ionic/angular';
 import { switchMap, take } from 'rxjs/operators';
 
 import { Location } from '../../../models/location';
@@ -10,6 +10,7 @@ import { UserService } from '../../../pages/login/user.service';
 import { AlertUtil } from '../../../alert-utility/alert-utility.util';
 import { User } from '../../../models/user';
 import { RequestStatusEnum } from 'src/app/enum/request-status.enum';
+import { GoogleAutocompleteComponent } from 'src/app/shared/components/google-autocomplete/google-autocomplete.component';
 
 @Component({
   selector: 'app-new-request',
@@ -26,7 +27,8 @@ export class NewRequestPage implements OnInit {
     private requestService: RequestService,
     private navCtrl: NavController,
     private userService: UserService,
-    private alertUtil: AlertUtil
+    private alertUtil: AlertUtil,
+    private modalCtrl: ModalController
   ) {}
 
   ngOnInit() {
@@ -38,6 +40,9 @@ export class NewRequestPage implements OnInit {
         requester: new FormControl(user.name, {
           updateOn: 'blur',
           validators: [Validators.required],
+        }),
+        address: new FormControl(this.location?.address, {
+          validators: [ Validators.required]
         }),
         contact: new FormControl(user.mobile, {
           updateOn: 'blur',
@@ -51,17 +56,37 @@ export class NewRequestPage implements OnInit {
     this.location = location;
   }
 
+  openLocationPicker(){
+    console.log('location picker clicked');
+    let placeChosenEvent = new EventEmitter();
+    this.modalCtrl.create({
+      component: GoogleAutocompleteComponent,
+      componentProps: {
+        placeChosen: placeChosenEvent
+      }
+    }).then(element => {
+      element.present();
+    });
+
+    placeChosenEvent.subscribe(loc => {
+      this.location = loc;
+      this.form.get('address').setValue(this.location?.address);
+    })
+  }
+
   onBehalfChanged(event: any){
     if(event.detail.checked){
       console.log('setting null since value is : ', event.detail.checked);
       this.form.get('requester').setValue(null);
+      this.form.get('address').setValue(null);
       this.form.get('contact').setValue(null);
       this.location = new Location();
     } else{
+      this.location = this.currentUser.location;
       console.log('setting user values since value is : ', event.detail.checked);
       this.form.get('requester').setValue(this.currentUser.name);
+      this.form.get('address').setValue(this.location?.address);
       this.form.get('contact').setValue( this.currentUser.mobile);
-      this.location = this.currentUser.location;
     }
   }
 

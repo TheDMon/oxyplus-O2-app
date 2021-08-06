@@ -19,6 +19,7 @@ export class DiscoverMapPage implements OnInit, OnDestroy {
   isDonor = false;
   distance: number;
   subscriptions: Subscription[] = [];
+  showLoading = false;
 
   constructor(
     private userService: UserService,
@@ -44,16 +45,11 @@ export class DiscoverMapPage implements OnInit, OnDestroy {
   }
 
   onMapLoadCompleted(e: any) {
-    // if (this.isDonor) {
-    //   this.findRequests();
-    // } else {
-    //   this.findDonars();
-    // }
-
     this.loadMapData();
   }
 
   loadMapData() {
+    this.showLoading = true;
     this.userService.isDonorProfile
       .pipe(
         take(1),
@@ -66,7 +62,18 @@ export class DiscoverMapPage implements OnInit, OnDestroy {
           }
         })
       )
-      .subscribe();
+      .subscribe({
+        next:(value) => {
+          console.log('emitted value ==>', value);
+        },
+        complete: () => {
+          this.showLoading = false;
+        },
+        error: (error) => {
+          this.showLoading = false;
+          console.error(error);
+        }
+      });
   }
 
   findDonars() {
@@ -90,7 +97,7 @@ export class DiscoverMapPage implements OnInit, OnDestroy {
         });
 
       this.map.setMarkers(markers);
-      this.map.setFocus(this.distance);
+      this.map.setFocus(markers); // it was distance before
     });
   }
 
@@ -115,7 +122,7 @@ export class DiscoverMapPage implements OnInit, OnDestroy {
           return m;
         });
       this.map.setMarkers(markers);
-      this.map.setFocus(this.distance);
+      this.map.setFocus(markers); // it was distacne before
     });
   }
 

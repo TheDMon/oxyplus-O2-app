@@ -69,18 +69,11 @@ export class UserService {
           };
 
           this._accessToken.next(authResponse.accessToken);
-          // remove item if present
+          // store in device
           Storage.set({
             key: this.userAccessKey,
             value: JSON.stringify(userData),
           });
-
-          // if (localStorage.getItem(this.userAccessKey)) {
-          //   localStorage.removeItem(this.userAccessKey);
-          // }
-
-          // // add item to storage
-          // localStorage.setItem(this.userAccessKey, JSON.stringify(userData));
         })
       );
   }
@@ -141,9 +134,7 @@ export class UserService {
         this._accessToken.next(userData.accessToken);
         return this.loadUserProfile(userData.email);;
       }),
-      map((users) => {
-        return users && users.length > 0;
-      })
+      map((users) => users && users.length > 0)
     );
   }
 
@@ -151,11 +142,8 @@ export class UserService {
     // remove item from storage
     Storage.remove({ key: this.userAccessKey });
 
-    console.log(localStorage.getItem(this.userAccessKey));
-
     this._accessToken.next(null);
     this._userProfileCompleted = false;
-    //this._user.next(null);
   }
 
   updateSubscriptionDetails(subscriptionDetails: SubscriptionDetails) {

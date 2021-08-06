@@ -7,8 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { NewRequestPageRoutingModule } from './new-request-routing.module';
 
 import { NewRequestPage } from './new-request.page';
-import { GoogleMapModule } from 'src/app/google-map/google-map.module';
-import { SharedModule } from 'src/app/shared/shared.module';
+import { SharedModule } from '../../../shared/shared.module';
 
 @NgModule({
   imports: [
@@ -16,7 +15,6 @@ import { SharedModule } from 'src/app/shared/shared.module';
     ReactiveFormsModule,
     IonicModule,
     NewRequestPageRoutingModule,
-    GoogleMapModule,
     SharedModule
   ],
   declarations: [NewRequestPage]

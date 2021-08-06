@@ -30,26 +30,25 @@
             <ion-input formControlName="requester"></ion-input>
             <ion-icon name="person-outline" slot="end"></ion-icon>
           </ion-item>
-          <ion-item *ngIf="!form.get('requester').valid">
+          <ion-item *ngIf="!form.get('requester').valid && form.get('requester').touched">
             <ion-label>Requester is required</ion-label>
           </ion-item>
         </ion-col>
       </ion-row>
       <ion-row>
         <ion-col size-md="6" offset-md="3">
-          <ion-item>
+          <ion-item >
             <ion-label position="floating">Location</ion-label>
-            <!-- <ion-input formControlName="location"></ion-input> -->
-            <app-location-autocomplete
+            <!-- <app-location-autocomplete
               style="width: 100%"
               [location]="location"
               (onChange)="onLocationChange($event)"
             >
-            </app-location-autocomplete>
-            <!-- <app-location-autosuggest></app-location-autosuggest> -->
+            </app-location-autocomplete> -->
+            <ion-input (click)="openLocationPicker()" formControlName="address"></ion-input>
             <ion-icon name="locate-outline" slot="end"></ion-icon>
           </ion-item>
-          <ion-item *ngIf="!location.position">
+          <ion-item *ngIf="!form.get('address').valid && form.get('address').touched">
             <ion-label>Location is required</ion-label>
           </ion-item>
         </ion-col>
@@ -61,7 +60,7 @@
             <ion-input formControlName="contact" type="number"></ion-input>
             <ion-icon name="call-outline" slot="end"></ion-icon>
           </ion-item>
-          <ion-item  *ngIf="!form.get('contact').valid">
+          <ion-item  *ngIf="!form.get('contact').valid && form.get('contact').touched">
             <ion-label>Contact is required</ion-label>
           </ion-item>
         </ion-col>

@@ -1,26 +1,30 @@
+/* eslint-disable no-underscore-dangle */
 import { HttpClient } from '@angular/common/http';
-import {
-  Component,
-  OnInit,
-} from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Location } from 'src/app/models/location';
-import { UserService } from 'src/app/pages/login/user.service';
+import { ModalController } from '@ionic/angular';
+import { Subscription } from 'rxjs';
+import { switchMap, take } from 'rxjs/operators';
+
+import { UserService } from '../../pages/login/user.service';
+import { GoogleAutocompleteComponent } from '../../shared/components/google-autocomplete/google-autocomplete.component';
 import { AlertUtil } from '../../alert-utility/alert-utility.util';
 import { Role } from '../../models/role';
 import { User } from '../../models/user';
+import { ProfileService } from './profile.service';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss'],
 })
-export class ProfilePage implements OnInit {
+export class ProfilePage implements OnInit, OnDestroy {
   user: User;
   showProgess = false;
   isNewProfile = false;
   isDonor = false;
   selectedRoleID: string;
+  subscriptions: Subscription[] = [];
 
   roles: Role[];
 
@@ -28,7 +32,9 @@ export class ProfilePage implements OnInit {
     private http: HttpClient,
     private route: ActivatedRoute,
     private alertUtil: AlertUtil,
-    private userService: UserService
+    private userService: UserService,
+    private profileService: ProfileService,
+    private modalCtrl: ModalController
   ) {
     this.route.params.forEach((param) => {
       if (param.type) {
@@ -39,38 +45,69 @@ export class ProfilePage implements OnInit {
   }
 
   ngOnInit() {
-    this.getRoles();
-    this.userService.loggedInUser.subscribe((user) => {
-      if(user){
-        this.user = user;
-      } else {
-        this.user = new User();
-      }
-    });
+    this.loadProfileRoles();
+    this.subscriptions.push(
+      this.userService.loggedInUser
+        .pipe(
+          switchMap((user) => {
+            if (user) {
+              this.user = user;
+            } else {
+              this.user = new User();
+            }
+            return this.userService.isDonorProfile;
+          }),
+          switchMap((isDonor) => {
+            this.isDonor = isDonor;
+            return this.profileService.profileRoles;
+          })
+        )
+        .subscribe((roles) => (this.roles = roles))
+    );
+
     if (this.user.role !== undefined) {
-      // eslint-disable-next-line no-underscore-dangle
       this.selectedRoleID = this.user.role._id;
     }
-    console.log('profile page', this.user);
   }
 
-  onLocationChange(location: Location) {
-    this.user.location = location;
-  }
-
-  getRoles() {
-    this.http.get<Role[]>(`http://localhost:3000/oxyplus/list/Role`).subscribe(
-      (data) => (this.roles = data),
-      (err) => console.log(err),
-      () => {
-        console.log(this.roles);
-        this.checkIfDonor();
-      }
+  loadProfileRoles() {
+    this.subscriptions.push(
+      this.profileService
+        .loadRoles()
+        .pipe(take(1))
+        .subscribe((roles) => (this.roles = roles))
     );
   }
 
-  checkIfDonor() {
-    this.userService.isDonorProfile.subscribe(isDonor => this.isDonor = isDonor);
+  profileChosen() {
+    if (
+      this.roles.find((x) => x._id === this.selectedRoleID).name !== 'Recipient'
+    ) {
+      this.isDonor = true;
+    } else {
+      this.isDonor = false;
+    }
+  }
+
+  openLocationPicker() {
+    console.log('location picker clicked');
+    const placeChosenEvent = new EventEmitter();
+    this.modalCtrl
+      .create({
+        component: GoogleAutocompleteComponent,
+        componentProps: {
+          placeChosen: placeChosenEvent,
+        },
+      })
+      .then((element) => {
+        element.present();
+      });
+
+    this.subscriptions.push(
+      placeChosenEvent.subscribe((loc) => {
+        this.user.location = loc;
+      })
+    );
   }
 
   createProfile() {
@@ -95,7 +132,7 @@ export class ProfilePage implements OnInit {
         );
 
         this.showProgess = false;
-      }
+      },
     });
   }
 
@@ -121,7 +158,11 @@ export class ProfilePage implements OnInit {
         );
 
         this.showProgess = false;
-      }
+      },
     });
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 }

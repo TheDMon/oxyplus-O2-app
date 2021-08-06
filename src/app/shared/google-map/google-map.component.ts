@@ -18,6 +18,7 @@ export class GoogleMapComponent implements OnInit, AfterViewInit {
   map: any;
   bounds: any;
   addedMarkers: any[] = [];
+  addedInfoWindows: any[] = [];
 
   constructor() { }
 
@@ -51,7 +52,7 @@ export class GoogleMapComponent implements OnInit, AfterViewInit {
 
   setMarkers(markers: MapMarker[]) {
     //clear markers
-    this.addedMarkers = [];
+    this.addedMarkers.forEach(marker => marker.setMap(null));
 
     // now lets add markers
     markers.forEach((item) => {
@@ -75,9 +76,11 @@ export class GoogleMapComponent implements OnInit, AfterViewInit {
 
       // Add click listener to each marker
       google.maps.event.addListener(marker, 'click', () => {
+        this.addedInfoWindows.forEach(infoWin => infoWin.close());
         const infoWindow = new google.maps.InfoWindow();
         infoWindow.setContent(infoWindowContent);
         infoWindow.open(this.map, marker);
+        this.addedInfoWindows.push(infoWindow);
       });
 
       this.addedMarkers.push(marker);
@@ -87,9 +90,9 @@ export class GoogleMapComponent implements OnInit, AfterViewInit {
 
   /* Once all the markers have been placed, adjust the bounds of the map to
    * show all the markers within the visible area. Trying a hack here*/
-  setFocus(distanceRad: number) {
+  setFocus(markers: MapMarker[]) {
     this.bounds = new google.maps.LatLngBounds();
-    this.addedMarkers.forEach(marker => this.bounds.extend(marker.getPosition()));
+    markers.forEach(marker => this.bounds.extend(marker.position));
     this.map.fitBounds(this.bounds);
   }
 }

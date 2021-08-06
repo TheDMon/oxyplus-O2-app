@@ -38,11 +38,11 @@ export class RequestDetailComponent implements OnInit {
 
     this.userService.loggedInUser.subscribe((user) => (this.user = user));
 
-    this.mapImgUrl = this.getMapImage(
-      this.request.location.position.lat,
-      this.request.location.position.lng,
-      18
-    );
+    // this.mapImgUrl = this.getMapImage(
+    //   this.request.location.position.lat,
+    //   this.request.location.position.lng,
+    //   18
+    // );
   }
 
   onUpdate() {
@@ -130,7 +130,11 @@ export class RequestDetailComponent implements OnInit {
   }
 
   onCancel() {
-    this.updateRequest(this.statusList.find((x) => x.desc === RequestStatusEnum.Cancelled));
+    this.alertUtil.presentConfirm('Confirm', '', 'Are you sure to cancel the request?').then((dialogResult => {
+      if(dialogResult){
+        this.updateRequest(this.statusList.find((x) => x.desc === RequestStatusEnum.Cancelled));
+      }
+    }));
   }
 
   private getMapImage(lat: number, lng: number, zoom: number) {
