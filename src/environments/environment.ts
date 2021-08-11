@@ -4,8 +4,9 @@
 
 export const environment = {
   production: false,
-  //apiBaseUrl: 'http://localhost:3000',
-  apiBaseUrl: 'https://oxyplus-api.mybluemix.net',
+  apiBaseUrl: 'http://localhost:3000',
+  //apiBaseUrl: 'https://oxyplus-api.mybluemix.net',
+  publicVapidKey: 'BHDNHLflG0CSxnKyC71y-9ZhJSn4Gfht1WSpvFLFtnIJ9BTdcSQ7e2F_wT1Dx3EW0MqhUdhoylcSJ69VGFMizmc',
   googleMapsAPIKey: 'AIzaSyBUUOyUvbNEznDVaUbNlnVVOlXpBaUnFoI',
   mapBoxToken: 'pk.eyJ1IjoiYXNpc2hkYXMxOTg1IiwiYSI6ImNrcmRlaGU2dzRlMXIycXM2NHgwOWZseG8ifQ.9zmTWE8taNrzRwlpwSE59g'
 };

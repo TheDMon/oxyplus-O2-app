@@ -4,10 +4,12 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { UserService } from './pages/login/user.service';
-import { SwPush } from '@angular/service-worker';
+import { SwPush, SwUpdate } from '@angular/service-worker';
 import { SubscriptionDetails } from './models/subscription-details';
 import { take } from 'rxjs/operators';
 import { Capacitor } from '@capacitor/core';
+
+import { environment } from '../environments/environment';
 import {
   ActionPerformed,
   PushNotifications,
@@ -25,11 +27,16 @@ export class AppComponent implements OnInit {
     private userService: UserService,
     private navCtrl: NavController,
     private router: Router,
-    private swPush: SwPush
-  ) {}
-
-  VAPID_PUBLIC_KEY =
-    'BHDNHLflG0CSxnKyC71y-9ZhJSn4Gfht1WSpvFLFtnIJ9BTdcSQ7e2F_wT1Dx3EW0MqhUdhoylcSJ69VGFMizmc';
+    private swPush: SwPush,
+    private swUpdate: SwUpdate
+  ) {
+    // code to subscribe to update available event
+    this.swUpdate.available.subscribe(event => {
+      if(event.available){
+        window.alert('A new version is available! Reload to install...');
+      }
+    });
+  }
 
   initPushNotifications() {
     PushNotifications.requestPermissions().then((result) => {
@@ -76,18 +83,26 @@ export class AppComponent implements OnInit {
       console.log('Enabling push notification...');
       this.initPushNotifications();
     }
+
+    if(this.swPush.isEnabled){
+      this.swPush.notificationClicks.subscribe();
+    }
   }
 
   logout() {
     this.userService.logout();
     this.navCtrl.pop();
-    this.router.navigate(['/', 'login']);
+    this.router.navigate(['/login'], { replaceUrl: true });
+  }
+
+  get canSupportPushNotificaiton() {
+    return this.swPush.isEnabled;
   }
 
   subscribeToNotifications() {
     this.swPush
       .requestSubscription({
-        serverPublicKey: this.VAPID_PUBLIC_KEY,
+        serverPublicKey: environment.publicVapidKey,
       })
       .then((sub) => {
         const subscriptionDetails: SubscriptionDetails = {

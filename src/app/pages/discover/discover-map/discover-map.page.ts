@@ -63,9 +63,6 @@ export class DiscoverMapPage implements OnInit, OnDestroy {
         })
       )
       .subscribe({
-        next:(value) => {
-          console.log('emitted value ==>', value);
-        },
         complete: () => {
           this.showLoading = false;
         },
@@ -122,7 +119,7 @@ export class DiscoverMapPage implements OnInit, OnDestroy {
           return m;
         });
       this.map.setMarkers(markers);
-      this.map.setFocus(markers); // it was distacne before
+      this.map.setFocus(markers); // it was distance before for MapMyIndia
     });
   }
 

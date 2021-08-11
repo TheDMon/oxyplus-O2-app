@@ -11,7 +11,8 @@
           "/index.html",
           "/manifest.webmanifest",
           "/*.css",
-          "/*.js"
+          "/*.js",
+          "/*.(eot|svg|cur|jpg|png|webp|gif|otf|ttf|woff|woff2|ani)"
         ]
       }
     },
@@ -25,8 +26,7 @@
           "/*.(eot|svg|cur|jpg|png|webp|gif|otf|ttf|woff|woff2|ani)"
         ],
         "urls": [
-          "https://unpkg.com/leaflet@1.7.1/**",
-          "https://maps.mapmyindia.com/**"
+          "https://apis.mapmyindia.com/advancedmaps/v1/4877ca98884eb8a81788d9435ddcc3ca/map_load?v=1.3"
         ]
       }
     }
@@ -35,13 +35,12 @@
     {
       "name": "data",
       "urls": [
-        "http://127.0.0.1:8080/svg/**",
-        "http://localhost:3000/**"
+        "https://oxyplus-api.mybluemix.net/**"
       ],
       "cacheConfig": {
-        "maxSize": 5,
+        "maxSize": 20,
         "maxAge": "12h",
-        "timeOut": "5s",
+        "timeout": "5s",
         "strategy": "freshness"
       }
     }

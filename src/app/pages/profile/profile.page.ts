@@ -12,6 +12,7 @@ import { AlertUtil } from '../../alert-utility/alert-utility.util';
 import { Role } from '../../models/role';
 import { User } from '../../models/user';
 import { ProfileService } from './profile.service';
+import { Location } from 'src/app/models/location';
 
 @Component({
   selector: 'app-profile',
@@ -29,7 +30,6 @@ export class ProfilePage implements OnInit, OnDestroy {
   roles: Role[];
 
   constructor(
-    private http: HttpClient,
     private route: ActivatedRoute,
     private alertUtil: AlertUtil,
     private userService: UserService,
@@ -54,6 +54,8 @@ export class ProfilePage implements OnInit, OnDestroy {
               this.user = user;
             } else {
               this.user = new User();
+              this.user.email = this.userService.userEmail;
+              this.user.location = new Location();
             }
             return this.userService.isDonorProfile;
           }),
@@ -80,8 +82,10 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
   profileChosen() {
+    const selectedRole = this.roles.find((x) => x._id === this.selectedRoleID);
+    this.user.role = selectedRole;
     if (
-      this.roles.find((x) => x._id === this.selectedRoleID).name !== 'Recipient'
+      selectedRole.name !== 'Recipient'
     ) {
       this.isDonor = true;
     } else {
@@ -90,7 +94,6 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
   openLocationPicker() {
-    console.log('location picker clicked');
     const placeChosenEvent = new EventEmitter();
     this.modalCtrl
       .create({
@@ -111,7 +114,11 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
   createProfile() {
-    console.log('user', this.user);
+    if(!this.isFormValid()){
+      this.alertUtil.presentAlert('Information missing', '' , 'Please enter required information');
+      return;
+    }
+
     this.showProgess = true;
 
     this.userService.createUserProfile(this.user).subscribe({
@@ -119,7 +126,7 @@ export class ProfilePage implements OnInit, OnDestroy {
         this.alertUtil.presentAlert(
           'Profile',
           '',
-          'Profile created successfully'
+          'Profile created successfully!'
         );
 
         this.showProgess = false;
@@ -137,7 +144,11 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
   updateProfile() {
-    console.log('user', this.user);
+    if(!this.isFormValid()){
+      this.alertUtil.presentAlert('Information missing', '' , 'Please enter required information');
+      return;
+    }
+
     this.showProgess = true;
 
     this.userService.updateUserProfile(this.user).subscribe({
@@ -160,6 +171,15 @@ export class ProfilePage implements OnInit, OnDestroy {
         this.showProgess = false;
       },
     });
+  }
+
+  isFormValid(){
+    console.log(this.user);
+    if(this.user.email && this.user.mobile && this.user.location && this.user.role){
+      return this.isDonor ? this.user.quantity > -1 : true;
+    } else {
+      return false;
+    }
   }
 
   ngOnDestroy() {

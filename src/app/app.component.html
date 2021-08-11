@@ -1,9 +1,11 @@
 <ion-app>
   <ion-menu side="start" menuId="first" contentId="main">
-    <ion-header>
-      <ion-toolbar color="primary">
+    <ion-header class="menu-header">
+      <!-- <ion-toolbar>
         <ion-title>Oxyplus</ion-title>
-      </ion-toolbar>
+        <ion-img scr="../assests/icon/favicon.png"></ion-img>
+      </ion-toolbar> -->
+      <div class="menu-header-text"><span>Oxyplus</span></div>
     </ion-header>
     <ion-content>
       <ion-list>
@@ -32,9 +34,15 @@
           </ion-item>
         </ion-menu-toggle>
       </ion-list>
-      <button class="button button-primary" (click)="subscribeToNotifications()">
-        Subscribe
-      </button>
+      <div class="menu-footer">
+        <button
+          *ngIf="canSupportPushNotificaiton"
+          class="button button-primary"
+          (click)="subscribeToNotifications()"
+        >
+          Subscribe
+        </button>
+      </div>
     </ion-content>
   </ion-menu>
 

@@ -1,0 +1,43 @@
+.menu-header {
+  height: 200px;
+  border-radius: 0px 0px 40px 40px;
+  background: rgb(119, 118, 120);
+  opacity: 0.6;
+  background: linear-gradient(
+    0deg,
+    rgba(119, 118, 120, 1) 0%,
+    rgba(185, 185, 185, 1) 13%,
+    rgba(249, 249, 249, 1) 100%
+  );
+  display: flex;
+  justify-content: center;
+}
+
+.menu-header-text {
+  align-self: center;
+  background: #fff;
+  width: 100px;
+  height: 100px;
+  border-radius: 50px;
+  display: flex;
+  justify-content: center;
+  opacity: 1;
+}
+
+.menu-header-text > span {
+  align-self: center;
+  color: #4b4949;
+  font-weight: bold;
+  font-size: 24px;
+}
+
+ion-list {
+  background: transparent;
+}
+
+
+.menu-footer {
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+}

@@ -1,5 +1,4 @@
 <ion-content>
   <!-- <app-map-my-india (loadCompleted)="onMapLoadCompleted($event)"></app-map-my-india> -->
-  <ion-spinner *ngIf="showLoading" color="primary"></ion-spinner>
-  <app-google-map *ngIf="!showLoading" (loadCompleted)="onMapLoadCompleted($event)"></app-google-map>
+  <app-google-map (loadCompleted)="onMapLoadCompleted($event)"></app-google-map>
 </ion-content>

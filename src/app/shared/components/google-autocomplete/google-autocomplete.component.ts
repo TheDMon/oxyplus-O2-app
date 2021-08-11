@@ -2,7 +2,7 @@ import { Component, OnInit, Output } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Geolocation } from '@capacitor/geolocation';
 
-import { Location } from 'src/app/models/location';
+import { AddressComponent, Location } from 'src/app/models/location';
 import { EventEmitter } from '@angular/core';
 
 declare let google: any;
@@ -57,7 +57,7 @@ export class GoogleAutocompleteComponent implements OnInit {
         componentRestrictions: { country: 'in' },
         fields: ['address_components', 'geometry'],
         strictBounds: false,
-        types: ['address'],
+        types: ['geocode'],
       },
       (predictions, serviceStatus) => {
         this.predictedPlaces = predictions;
@@ -81,6 +81,7 @@ export class GoogleAutocompleteComponent implements OnInit {
           console.log(placeResult);
 
           let addressText = '';
+          this.pickedLocation.addressComponent = new AddressComponent();
           placeResult.address_components.forEach(addrComp => {
             addressText += ', ' + addrComp.long_name;
             if(addrComp.types[0] === 'street_number'){ //61/1B
@@ -91,7 +92,7 @@ export class GoogleAutocompleteComponent implements OnInit {
               this.pickedLocation.addressComponent.addressLine1 = addrComp.long_name;
             }else if(addrComp.types[0] === 'sublocality_level_2'){ // syampur
               // address line 1
-              this.pickedLocation.addressComponent.addressLine1 += ',' + addrComp.long_name;
+              this.pickedLocation.addressComponent.addressLine1 += ', ' + addrComp.long_name;
             }else if(addrComp.types[0] === 'sublocality_level_3'){ // syampur
               // address line 2
               this.pickedLocation.addressComponent.addressLine2 = addrComp.long_name;
@@ -113,7 +114,7 @@ export class GoogleAutocompleteComponent implements OnInit {
               this.pickedLocation.addressComponent.country = addrComp.long_name;
             }else if(addrComp.types[0] === 'postal_code'){ //700137
               //pincode
-              this.pickedLocation.addressComponent.pincode = addrComp.long_name;
+              this.pickedLocation.addressComponent.pincode = +addrComp.long_name;
             }
           });
 

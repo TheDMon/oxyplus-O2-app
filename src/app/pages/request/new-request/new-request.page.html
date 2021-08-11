@@ -1,11 +1,14 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Raise help request</ion-title>
+    <ion-title size="small">Raise help request</ion-title>
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/discover"></ion-back-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button [disabled]="!form.valid || !location.position" (click)="addRequest()">
+      <ion-button
+        [disabled]="!form.valid || !location.position"
+        (click)="addRequest()"
+      >
         <ion-icon name="checkmark-outline" type="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -19,7 +22,11 @@
         <ion-col size-md="4" offset-md="4">
           <ion-item lines="none">
             <ion-label>For someone else</ion-label>
-            <ion-toggle slot="start" name="onBehalfFlag" (ionChange)="onBehalfChanged($event)"></ion-toggle>
+            <ion-toggle
+              slot="start"
+              name="onBehalfFlag"
+              (ionChange)="onBehalfChanged($event)"
+            ></ion-toggle>
           </ion-item>
         </ion-col>
       </ion-row>
@@ -30,25 +37,28 @@
             <ion-input formControlName="requester"></ion-input>
             <ion-icon name="person-outline" slot="end"></ion-icon>
           </ion-item>
-          <ion-item *ngIf="!form.get('requester').valid && form.get('requester').touched">
+          <ion-item
+            *ngIf="!form.get('requester').valid && form.get('requester').touched"
+          >
             <ion-label>Requester is required</ion-label>
           </ion-item>
         </ion-col>
       </ion-row>
       <ion-row>
         <ion-col size-md="6" offset-md="3">
-          <ion-item >
+          <ion-item>
             <ion-label position="floating">Location</ion-label>
-            <!-- <app-location-autocomplete
-              style="width: 100%"
-              [location]="location"
-              (onChange)="onLocationChange($event)"
-            >
-            </app-location-autocomplete> -->
-            <ion-input (click)="openLocationPicker()" formControlName="address"></ion-input>
+            <ion-input
+              (click)="openLocationPicker()"
+              readonly
+              formControlName="address"
+              placeholder="Click to open location picker"
+            ></ion-input>
             <ion-icon name="locate-outline" slot="end"></ion-icon>
           </ion-item>
-          <ion-item *ngIf="!form.get('address').valid && form.get('address').touched">
+          <ion-item
+            *ngIf="!form.get('address').valid && form.get('address').touched"
+          >
             <ion-label>Location is required</ion-label>
           </ion-item>
         </ion-col>
@@ -60,7 +70,9 @@
             <ion-input formControlName="contact" type="number"></ion-input>
             <ion-icon name="call-outline" slot="end"></ion-icon>
           </ion-item>
-          <ion-item  *ngIf="!form.get('contact').valid && form.get('contact').touched">
+          <ion-item
+            *ngIf="!form.get('contact').valid && form.get('contact').touched"
+          >
             <ion-label>Contact is required</ion-label>
           </ion-item>
         </ion-col>

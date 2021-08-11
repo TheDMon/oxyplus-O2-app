@@ -22,6 +22,7 @@ export class UserService {
   private _user = new BehaviorSubject<User>(null);
   private _userProfileCompleted = false;
   private _accessToken = new BehaviorSubject<string>(null);
+  private _userEmail: string;
 
   constructor(private http: HttpClient) {}
 
@@ -29,6 +30,10 @@ export class UserService {
     return this._accessToken
       .asObservable()
       .pipe(map((accessToken) => !!accessToken));
+  }
+
+  get userEmail() {
+    return this._userEmail;
   }
 
   get isProfileComplete() {
@@ -59,6 +64,8 @@ export class UserService {
   }
 
   login(email: string, password: string) {
+    this._userEmail = email;
+
     return this.http
       .post(`${this.apiBaseUrl}/auth/login`, { email, password })
       .pipe(

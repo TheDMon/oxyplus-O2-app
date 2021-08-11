@@ -1,5 +1,13 @@
 #map {
     height: 100%;
+    background: #b6b5b5;
+    display: flex;
+    justify-content: center;
+}
+
+#map > span {
+  align-self: center;
+  color: red;
 }
 
 ::ng-deep #infoWindow, .title, .address, .contact {

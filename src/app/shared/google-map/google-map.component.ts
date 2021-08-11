@@ -1,4 +1,4 @@
-import { AfterViewInit, EventEmitter } from '@angular/core';
+import { AfterViewInit, EventEmitter, OnDestroy } from '@angular/core';
 import { Component, ElementRef, OnInit, Output, ViewChild } from '@angular/core';
 import { Geolocation } from '@capacitor/geolocation';
 
@@ -11,7 +11,7 @@ declare let google: any;
   templateUrl: './google-map.component.html',
   styleUrls: ['./google-map.component.scss'],
 })
-export class GoogleMapComponent implements OnInit, AfterViewInit {
+export class GoogleMapComponent implements AfterViewInit {
   @ViewChild('map') mapRef: ElementRef;
   @Output() loadCompleted = new EventEmitter<boolean>();
 
@@ -21,9 +21,6 @@ export class GoogleMapComponent implements OnInit, AfterViewInit {
   addedInfoWindows: any[] = [];
 
   constructor() { }
-
-  ngOnInit() {
-  }
 
   ngAfterViewInit(){
     this.initMap();
