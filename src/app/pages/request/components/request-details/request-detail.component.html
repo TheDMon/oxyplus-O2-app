@@ -73,10 +73,14 @@
   <ion-grid>
     <ion-row>
       <ion-col class="ion-text-center">
-        <ng-content *ngIf="isDonar | async; then aBlock; else bBlock"></ng-content>
+        <ng-content
+          *ngIf="isDonar | async; then aBlock; else bBlock"
+        ></ng-content>
         <ng-template #aBlock
           ><ion-button class="primary" expand="clear" (click)="onUpdate()"
-            >Update</ion-button
+            >
+            <ion-icon name="arrow-redo"></ion-icon>
+            Update</ion-button
           ></ng-template
         >
         <ng-template #bBlock>
@@ -88,7 +92,9 @@
             class="primary"
             expand="clear"
             (click)="onCancel()"
-            >Cancel</ion-button
+          >
+            <ion-icon name="trash"></ion-icon>
+            Cancel</ion-button
           ></ng-template
         >
       </ion-col>

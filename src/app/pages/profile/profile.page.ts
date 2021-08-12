@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { HttpClient } from '@angular/common/http';
 import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ModalController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { switchMap, take } from 'rxjs/operators';
@@ -31,6 +31,7 @@ export class ProfilePage implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private alertUtil: AlertUtil,
     private userService: UserService,
     private profileService: ProfileService,
@@ -127,7 +128,9 @@ export class ProfilePage implements OnInit, OnDestroy {
           'Profile',
           '',
           'Profile created successfully!'
-        );
+        ).then(() => {
+          this.router.navigate(['/discover', { replaceUrl: true }]);
+        });
 
         this.showProgess = false;
       },

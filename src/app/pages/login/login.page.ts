@@ -63,7 +63,7 @@ export class LoginPage implements OnInit {
         if (user) {
           this.router.navigate(['/', 'discover']);
         } else {
-          this.router.navigate(['/', 'profile', { type: 'new' }]);
+          this.router.navigate(['/', 'profile', { type: 'new' , replaceUrl: true }]);
         }
         this.form.reset();
         this.showProgess = false;

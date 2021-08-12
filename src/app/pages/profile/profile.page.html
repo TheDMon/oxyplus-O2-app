@@ -88,13 +88,17 @@
           *ngIf="isNewProfile"
           (click)="createProfile()"
           expand="clear"
-          >Create</ion-button
+          >
+          <ion-icon name="save"></ion-icon>
+          Create</ion-button
         >
         <ion-button
           *ngIf="!isNewProfile"
           (click)="updateProfile()"
           expand="clear"
-          >Update</ion-button
+          >
+          <ion-icon name="checkmark"></ion-icon>
+          Update</ion-button
         >
       </ion-col>
     </ion-row>
