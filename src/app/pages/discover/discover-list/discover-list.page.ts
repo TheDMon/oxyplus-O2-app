@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ModalController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { Coordinate } from 'src/app/models/location';
 import { Request } from 'src/app/models/request';
 import { User } from 'src/app/models/user';
 import { UserService } from 'src/app/pages/login/user.service';
@@ -59,6 +60,23 @@ export class DiscoverListPage implements OnInit, OnDestroy {
         },
       })
       .then((elem) => elem.present());
+  }
+
+  mapsSelector(position: Coordinate) {
+    if (
+      /* if we're on iOS, open in Apple Maps */
+      navigator.platform.indexOf('iPhone') !== -1 ||
+      navigator.platform.indexOf('iPad') !== -1 ||
+      navigator.platform.indexOf('iPod') !== -1
+    ) {
+      window.open(
+        `maps://maps.google.com/maps?daddr=${position.lat},${position.lng}&amp;ll=`
+      );
+    } /* else use Google */ else {
+      window.open(
+        `https://maps.google.com/maps?daddr=${position.lat},${position.lng}&amp;ll=`
+      );
+    }
   }
 
   ngOnDestroy() {

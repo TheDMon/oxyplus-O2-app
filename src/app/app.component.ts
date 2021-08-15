@@ -31,9 +31,9 @@ export class AppComponent implements OnInit {
     private swUpdate: SwUpdate
   ) {
     // code to subscribe to update available event
-    this.swUpdate.available.subscribe(event => {
-      if(event.available){
-        window.alert('A new version is available! Reload to install...');
+    this.swUpdate.available.subscribe((event) => {
+      if (event.available) {
+        window.alert('Updates available! Close the app and reopen to install');
       }
     });
   }
@@ -84,8 +84,12 @@ export class AppComponent implements OnInit {
       this.initPushNotifications();
     }
 
-    if(this.swPush.isEnabled){
-      this.swPush.notificationClicks.subscribe();
+    if (this.swPush.isEnabled) {
+      this.swPush.notificationClicks.subscribe(({ action, notification }) => {
+        // TODO: Do something in response to notification click.
+        window.focus();
+        window.open(notification.data.url || 'https://oxyplus.mybluemix.net', '_self');
+      });
     }
   }
 

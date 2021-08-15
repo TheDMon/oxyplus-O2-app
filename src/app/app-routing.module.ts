@@ -6,33 +6,41 @@ const routes: Routes = [
   {
     path: '',
     redirectTo: 'discover',
-    pathMatch: 'full'
+    pathMatch: 'full',
   },
   {
     path: 'login',
-    loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule)
+    loadChildren: () =>
+      import('./pages/login/login.module').then((m) => m.LoginPageModule),
+    canActivate: [AuthGuard],
+    runGuardsAndResolvers: 'always'
   },
   {
     path: 'profile',
-    loadChildren: () => import('./pages/profile/profile.module').then( m => m.ProfilePageModule),
-    canActivate: [ AuthGuard]
+    loadChildren: () =>
+      import('./pages/profile/profile.module').then((m) => m.ProfilePageModule),
+    canLoad: [AuthGuard],
   },
   {
     path: 'request',
-    loadChildren: () => import('./pages/request/request.module').then( m => m.RequestPageModule),
-    canActivate: [AuthGuard ]
+    loadChildren: () =>
+      import('./pages/request/request.module').then((m) => m.RequestPageModule),
+    canLoad: [AuthGuard],
   },
   {
     path: 'discover',
-    loadChildren: () => import('./pages/discover/discover.module').then( m => m.DiscoverPageModule),
-    canActivate: [ AuthGuard ]
-  }
+    loadChildren: () =>
+      import('./pages/discover/discover.module').then(
+        (m) => m.DiscoverPageModule
+      ),
+    canLoad: [AuthGuard],
+  },
 ];
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
+    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules }),
   ],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

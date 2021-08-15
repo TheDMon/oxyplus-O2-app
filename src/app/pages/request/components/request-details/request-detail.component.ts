@@ -8,11 +8,12 @@ import { UserService } from 'src/app/pages/login/user.service';
 import { Request, RequestStatus } from '../../../../models/request';
 import { environment } from '../../../../../environments/environment';
 import { RequestStatusEnum } from '../../../../enum/request-status.enum';
+import { Coordinate } from 'src/app/models/location';
 
 @Component({
   selector: 'app-request-detail',
   templateUrl: './request-detail.component.html',
-  styleUrls: ['./request-detail.component.scss']
+  styleUrls: ['./request-detail.component.scss'],
 })
 export class RequestDetailComponent implements OnInit {
   @Input() request: Request;
@@ -32,17 +33,11 @@ export class RequestDetailComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.requestService
-      .requestStatusList()
-      .subscribe((result) => (this.statusList = result));
+    this.requestService.requestStatusList.subscribe(
+      (result) => (this.statusList = result)
+    );
 
     this.userService.loggedInUser.subscribe((user) => (this.user = user));
-
-    // this.mapImgUrl = this.getMapImage(
-    //   this.request.location.position.lat,
-    //   this.request.location.position.lng,
-    //   18
-    // );
   }
 
   onUpdate() {
@@ -130,11 +125,32 @@ export class RequestDetailComponent implements OnInit {
   }
 
   onCancel() {
-    this.alertUtil.presentConfirm('Confirm', '', 'Are you sure to cancel the request?').then((dialogResult => {
-      if(dialogResult){
-        this.updateRequest(this.statusList.find((x) => x.desc === RequestStatusEnum.Cancelled));
-      }
-    }));
+    this.alertUtil
+      .presentConfirm('Confirm', '', 'Are you sure to cancel the request?')
+      .then((dialogResult) => {
+        if (dialogResult) {
+          this.updateRequest(
+            this.statusList.find((x) => x.desc === RequestStatusEnum.Cancelled)
+          );
+        }
+      });
+  }
+
+  mapsSelector(position: Coordinate) {
+    if (
+      /* if we're on iOS, open in Apple Maps */
+      navigator.platform.indexOf('iPhone') !== -1 ||
+      navigator.platform.indexOf('iPad') !== -1 ||
+      navigator.platform.indexOf('iPod') !== -1
+    ) {
+      window.open(
+        `maps://maps.google.com/maps?daddr=${position.lat},${position.lng}&amp;ll=`
+      );
+    } /* else use Google */ else {
+      window.open(
+        `https://maps.google.com/maps?daddr=${position.lat},${position.lng}&amp;ll=`
+      );
+    }
   }
 
   private getMapImage(lat: number, lng: number, zoom: number) {

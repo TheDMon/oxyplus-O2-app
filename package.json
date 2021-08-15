@@ -38,6 +38,7 @@
     "angularfire2": "^5.4.2",
     "firebase": "^7.24.0",
     "firebase-tools": "^9.16.0",
+    "idb": "^6.1.2",
     "leaflet": "^1.7.1",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",

@@ -14,21 +14,32 @@ import { UserService } from '../login/user.service';
 export class RequestService {
   apiBaseUrl = environment.apiBaseUrl;
   private _myRequests = new BehaviorSubject<Request[]>([]);
+  private _requestStatuses = new BehaviorSubject<RequestStatus[]>([]);
 
   constructor(
     private http: HttpClient,
     private userService: UserService,
     private discoverService: DiscoverService
-  ) {}
+  ) {
+    this.loadRequestStatusList().subscribe();
+  }
 
   get myRequests() {
     return this._myRequests.asObservable();
   }
 
-  requestStatusList() {
-    return this.http.get<RequestStatus[]>(
-      `${this.apiBaseUrl}/oxyplus/list/RequestStatus`
-    );
+  get requestStatusList() {
+    return this._requestStatuses.asObservable();
+  }
+
+  loadRequestStatusList() {
+    return this.http
+      .get<RequestStatus[]>(`${this.apiBaseUrl}/oxyplus/list/RequestStatus`)
+      .pipe(
+        tap((list) => {
+          this._requestStatuses.next(list);
+        })
+      );
   }
 
   createRequest(newRequest: Request) {
@@ -56,8 +67,6 @@ export class RequestService {
       }),
       take(1),
       tap((requests) => {
-        console.log('Switched from BehaviborSubject Call');
-
         this._myRequests.next(requests.concat(savedRequest));
       })
     );
@@ -86,7 +95,6 @@ export class RequestService {
       }),
       take(1),
       tap((requests) => {
-        console.log('Switched from BehaviborSubject Call');
         updatedRequests = [...requests];
         const index = updatedRequests.findIndex(
           (x) => x._id === editRequest._id
@@ -95,19 +103,18 @@ export class RequestService {
         this._myRequests.next(updatedRequests);
 
         // let's reload discovered requests
-        if(editRequest.requestStatus.desc === 'Processing' || editRequest.requestStatus.desc === 'Submitted'){
-          this.discoverService.findSubmittedRequests().pipe(take(1)).subscribe();
+        if (
+          editRequest.requestStatus.desc === 'Processing' ||
+          editRequest.requestStatus.desc === 'Submitted'
+        ) {
+          this.discoverService
+            .findSubmittedRequests()
+            .pipe(take(1))
+            .subscribe();
         }
-
       })
     );
   }
-
-  // findActiveRequests(userId: string) {
-  //   return this.http.get<Request[]>(
-  //     `http://localhost:3000/request/active/${userId}`
-  //   );
-  // }
 
   viewRequests(status: string) {
     return this.http.get<Request[]>(

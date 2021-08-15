@@ -9,8 +9,9 @@ import { RequestService } from '../../../pages/request/request.service';
 import { UserService } from '../../../pages/login/user.service';
 import { AlertUtil } from '../../../alert-utility/alert-utility.util';
 import { User } from '../../../models/user';
-import { RequestStatusEnum } from 'src/app/enum/request-status.enum';
-import { GoogleAutocompleteComponent } from 'src/app/shared/components/google-autocomplete/google-autocomplete.component';
+import { RequestStatusEnum } from '../../../enum/request-status.enum';
+import { GoogleAutocompleteComponent } from '../../../shared/components/google-autocomplete/google-autocomplete.component';
+import { IndexDbService } from '../../../shared/services/index-db.service';
 
 @Component({
   selector: 'app-new-request',
@@ -28,7 +29,8 @@ export class NewRequestPage implements OnInit {
     private navCtrl: NavController,
     private userService: UserService,
     private alertUtil: AlertUtil,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private idbService: IndexDbService
   ) {}
 
   ngOnInit() {
@@ -42,7 +44,7 @@ export class NewRequestPage implements OnInit {
           validators: [Validators.required],
         }),
         address: new FormControl(this.location?.address, {
-          validators: [ Validators.required]
+          validators: [Validators.required],
         }),
         contact: new FormControl(user.mobile, {
           updateOn: 'blur',
@@ -56,51 +58,57 @@ export class NewRequestPage implements OnInit {
     this.location = location;
   }
 
-  openLocationPicker(){
+  openLocationPicker() {
     console.log('location picker clicked');
-    let placeChosenEvent = new EventEmitter();
-    this.modalCtrl.create({
-      component: GoogleAutocompleteComponent,
-      componentProps: {
-        placeChosen: placeChosenEvent
-      }
-    }).then(element => {
-      element.present();
-    });
+    const placeChosenEvent = new EventEmitter();
+    this.modalCtrl
+      .create({
+        component: GoogleAutocompleteComponent,
+        componentProps: {
+          placeChosen: placeChosenEvent,
+        },
+      })
+      .then((element) => {
+        element.present();
+      });
 
-    placeChosenEvent.subscribe(loc => {
+    placeChosenEvent.subscribe((loc) => {
       this.location = loc;
       this.form.get('address').setValue(this.location?.address);
-    })
+    });
   }
 
-  onBehalfChanged(event: any){
-    if(event.detail.checked){
+  onBehalfChanged(event: any) {
+    if (event.detail.checked) {
       console.log('setting null since value is : ', event.detail.checked);
       this.form.get('requester').setValue(null);
       this.form.get('address').setValue(null);
       this.form.get('contact').setValue(null);
       this.location = new Location();
-    } else{
+    } else {
       this.location = this.currentUser.location;
-      console.log('setting user values since value is : ', event.detail.checked);
+      console.log(
+        'setting user values since value is : ',
+        event.detail.checked
+      );
       this.form.get('requester').setValue(this.currentUser.name);
       this.form.get('address').setValue(this.location?.address);
-      this.form.get('contact').setValue( this.currentUser.mobile);
+      this.form.get('contact').setValue(this.currentUser.mobile);
     }
   }
 
   addRequest() {
-    if(!this.form.valid || !this.location.position){
+    if (!this.form.valid || !this.location.position) {
       return;
     }
 
+    const newRequest = new Request();
+
     this.requestService
-      .requestStatusList()
+      .requestStatusList
       .pipe(
         take(1),
         switchMap((statusList) => {
-          const newRequest = new Request();
           newRequest.requester = this.form.value.requester;
           newRequest.location = this.location;
           newRequest.contact = this.form.value.contact;
@@ -111,10 +119,25 @@ export class NewRequestPage implements OnInit {
           return this.requestService.createRequest(newRequest);
         })
       )
-      .subscribe(() => {
-        this.alertUtil.presentToast('Request has been submitted!');
-        this.form.reset();
-        this.navCtrl.pop();
-      });
+      .subscribe(
+        () => {
+          this.alertUtil.presentToast('Request has been submitted!');
+          this.form.reset();
+          this.navCtrl.pop();
+        },
+        (error) => {
+          console.log(error.status);
+          if (error.status === 504) {
+            // store it in indexdb
+            this.idbService
+              .add(newRequest)
+              .then(() => {
+                navigator.serviceWorker.ready.then((swRegistration) => {
+                  swRegistration.sync.register('add-request');
+                });
+              });
+          }
+        }
+      );
   }
 }

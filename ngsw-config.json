@@ -35,10 +35,11 @@
     {
       "name": "data",
       "urls": [
+        "https://oxyplus.mybluemix.net/**",
         "https://oxyplus-api.mybluemix.net/**"
       ],
       "cacheConfig": {
-        "maxSize": 20,
+        "maxSize": 100,
         "maxAge": "12h",
         "timeout": "5s",
         "strategy": "freshness"

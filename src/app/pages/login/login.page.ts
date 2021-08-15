@@ -50,20 +50,22 @@ export class LoginPage implements OnInit {
 
     const { email, password } = this.form.value;
 
-    const authCallObs = this.userService
-      .login(email, password)
-      .pipe(
-        switchMap(() => this.userService.loadUserProfile(email)),
-        switchMap(() => this.userService.loggedInUser)
-      );
+    const authCallObs = this.userService.login(email, password).pipe(
+      switchMap(() => this.userService.loadUserProfile(email)),
+      switchMap(() => this.userService.loggedInUser)
+    );
 
     this.showProgess = true;
     authCallObs.subscribe(
       (user) => {
         if (user) {
-          this.router.navigate(['/', 'discover']);
+          this.router.navigate(['/', 'discover', { replaceUrl: true }]);
         } else {
-          this.router.navigate(['/', 'profile', { type: 'new' , replaceUrl: true }]);
+          this.router.navigate([
+            '/',
+            'profile',
+            { type: 'new', replaceUrl: true },
+          ]);
         }
         this.form.reset();
         this.showProgess = false;
@@ -80,12 +82,17 @@ export class LoginPage implements OnInit {
 
   async registerWithEmail() {
     this.showProgess = true;
-    this.userService.registerAccount(this.form.value.email,
-      this.form.value.password).toPromise().then(() => {
-        this.alertUtil.presentToast('Registration successful! Please switch to login view to login');
+    this.userService
+      .registerAccount(this.form.value.email, this.form.value.password)
+      .toPromise()
+      .then(() => {
+        this.alertUtil.presentToast(
+          'Registration successful! Please switch to login view to login'
+        );
         this.form.reset();
         this.showProgess = false;
-      }).catch(err => {
+      })
+      .catch((err) => {
         this.alertUtil.presentAlert('Failure', '', err.error.message);
         this.showProgess = false;
       });
