@@ -1,8 +1,17 @@
 ion-card {
   border-radius: 15px;
-  //background-color: aliceblue;
+}
 
-  #submitter-info{
-    color: blue;
+.info {
+  background-color: rgba(218, 221, 226, 0.2);
+  border-radius: 10px;
+  margin-bottom: 5px;
+
+  ion-row {
+    padding:0px 2px;
   }
+}
+
+ion-card-header {
+  background-color: rgba(218, 221, 226, 0.2);
 }

@@ -3,6 +3,7 @@ import { User } from './user';
 
 export class Request {
     _id: string;
+    requestId: string;
     submittedBy: User;
     submittedOn: Date;
     requester: string;

@@ -2,6 +2,13 @@ importScripts("./ngsw-worker.js");
 
  var apiBaseUrl = 'https://oxyplus-api.mybluemix.net';
 
+ // let's implement notification click since swPush is a disappointment
+self.addEventListener('notificationclick', (event) => {
+  if(clients.openWindow && event.notification.data.url){
+    event.waitUntil(clients.openWindow(event.notification.data.url));
+  }
+})
+
 //  (function Init(){
 //    if (window.location.href.includes('localhost')) {
 //      apiBaseUrl = 'http://localhost:3000';

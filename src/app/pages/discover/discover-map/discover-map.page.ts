@@ -33,6 +33,7 @@ export class DiscoverMapPage implements OnInit, OnDestroy {
       )
     );
 
+    // this subscription was needed for map my india focus circle - not being used
     this.subscriptions.push(
       this.discoverService.distanceDiscovered.subscribe((distance) => {
         this.distance = distance;
@@ -89,6 +90,7 @@ export class DiscoverMapPage implements OnInit, OnDestroy {
           m.title = `${x.name}`;
           m.position = x.location.position;
           m.infoWin = infoWin;
+          m.type = 'donor';
 
           return m;
         });
@@ -115,6 +117,7 @@ export class DiscoverMapPage implements OnInit, OnDestroy {
           m.title = x.requester;
           m.position = x.location.position;
           m.infoWin = infoWin;
+          m.type = 'requester';
 
           return m;
         });

@@ -34,13 +34,25 @@
         </ion-menu-toggle>
       </ion-list>
       <div class="menu-footer">
-        <button
-          *ngIf="canSupportPushNotificaiton"
-          class="button button-primary"
-          (click)="subscribeToNotifications()"
-        >
-          Subscribe
-        </button>
+        <ng-content
+          *ngIf="hasPushNotificaitonSubscription | async; then aBlock; else bBlock"
+        ></ng-content>
+        <ng-template #aBlock>
+          <button
+            class="button button-primary"
+            (click)="unsubscribeFromNotifications()"
+          >
+            Unsubscribe
+          </button>
+        </ng-template>
+        <ng-template #bBlock>
+          <button
+            class="button button-primary"
+            (click)="subscribeToNotifications()"
+          >
+            Subscribe
+          </button>
+        </ng-template>
       </div>
     </ion-content>
   </ion-menu>

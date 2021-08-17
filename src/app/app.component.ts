@@ -6,7 +6,7 @@ import { NavController } from '@ionic/angular';
 import { UserService } from './pages/login/user.service';
 import { SwPush, SwUpdate } from '@angular/service-worker';
 import { SubscriptionDetails } from './models/subscription-details';
-import { take } from 'rxjs/operators';
+import { map, switchMap, take } from 'rxjs/operators';
 import { Capacitor } from '@capacitor/core';
 
 import { environment } from '../environments/environment';
@@ -16,6 +16,8 @@ import {
   PushNotificationSchema,
   Token,
 } from '@capacitor/push-notifications';
+import { AlertUtil } from './alert-utility/alert-utility.util';
+import { from, interval, of } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -28,12 +30,23 @@ export class AppComponent implements OnInit {
     private navCtrl: NavController,
     private router: Router,
     private swPush: SwPush,
-    private swUpdate: SwUpdate
+    private swUpdate: SwUpdate,
+    private alertUtil: AlertUtil
   ) {
     // code to subscribe to update available event
     this.swUpdate.available.subscribe((event) => {
       if (event.available) {
-        window.alert('Updates available! Close the app and reopen to install');
+        this.alertUtil
+          .presentConfirm(
+            'Updates available!',
+            '',
+            'Reload the app to install?'
+          )
+          .then((result) => {
+            if(result){
+              document.location.reload();
+            }
+          });
       }
     });
   }
@@ -84,13 +97,16 @@ export class AppComponent implements OnInit {
       this.initPushNotifications();
     }
 
-    if (this.swPush.isEnabled) {
-      this.swPush.notificationClicks.subscribe(({ action, notification }) => {
-        // TODO: Do something in response to notification click.
-        window.focus();
-        window.open(notification.data.url || 'https://oxyplus.mybluemix.net', '_self');
-      });
-    }
+    // if (this.swPush.isEnabled) {
+    //   this.swPush.notificationClicks.subscribe(({ action, notification }) => {
+    //     // TODO: Do something in response to notification click.
+    //     window.focus();
+    //     window.open(
+    //       notification.data.url || 'https://oxyplus.mybluemix.net',
+    //       '_self'
+    //     );
+    //   });
+    // }
   }
 
   logout() {
@@ -99,8 +115,10 @@ export class AppComponent implements OnInit {
     this.router.navigate(['/login'], { replaceUrl: true });
   }
 
-  get canSupportPushNotificaiton() {
-    return this.swPush.isEnabled;
+  get hasPushNotificaitonSubscription() {
+    return this.swPush.isEnabled
+      ? this.userService.hasSubscribedToNotification
+      : of(false);
   }
 
   subscribeToNotifications() {
@@ -110,17 +128,32 @@ export class AppComponent implements OnInit {
       })
       .then((sub) => {
         const subscriptionDetails: SubscriptionDetails = {
-          distance: 10,
+          distance: 50,
           subscription: sub,
         };
 
         this.userService
           .updateSubscriptionDetails(subscriptionDetails)
           .pipe(take(1))
-          .subscribe();
+          .subscribe(() => {
+            this.alertUtil.presentToast(
+              'Successfully subscribed to notification!'
+            );
+          });
       })
       .catch((err) =>
         console.error('Could not subscribe to notifications', err)
       );
+  }
+
+  unsubscribeFromNotifications() {
+    this.userService
+      .updateSubscriptionDetails(null)
+      .pipe(take(1))
+      .subscribe(() => {
+        this.alertUtil.presentToast(
+          'Successfully unsubscribed from notifications!'
+        );
+      });
   }
 }

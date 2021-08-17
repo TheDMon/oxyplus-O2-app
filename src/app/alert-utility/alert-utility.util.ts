@@ -16,27 +16,26 @@ export class AlertUtil {
   async presentAlert(header: string, subtitle: string, message: string) {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
-      header: header,
+      header,
       subHeader: subtitle,
-      message: message,
+      message,
       buttons: ['OK'],
     });
 
     await alert.present();
 
     const { role } = await alert.onDidDismiss();
-    console.log('onDidDismiss resolved with role', role);
   }
 
   async presentConfirm(header: string, subtitle: string, message: string) {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
-      header: header,
+      header,
       subHeader: subtitle,
-      message: message,
+      message,
       buttons: [
         {
-          text: 'OK',
+          text: 'Ok',
           role: 'confirmed',
         },
         {
@@ -49,7 +48,7 @@ export class AlertUtil {
     await alert.present();
 
     const { role } = await alert.onDidDismiss();
-    return role == 'confirmed';
+    return role === 'confirmed';
   }
 
   async presentToast(toastMsg: string) {
@@ -61,7 +60,7 @@ export class AlertUtil {
   }
 
   createButtons(inputButtons: any[]) {
-    let buttons = [];
+    const buttons = [];
     inputButtons.forEach((item) => {
       buttons.push({
         text: item.text,
@@ -82,6 +81,5 @@ export class AlertUtil {
     await actionSheet.present();
 
     const { role } = await actionSheet.onDidDismiss();
-    console.log('onDidDismiss resolved with role', role);
   }
 }

@@ -1,8 +1,10 @@
 /* eslint-disable no-underscore-dangle */
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { LoadingController } from '@ionic/angular';
 import { BehaviorSubject, throwError } from 'rxjs';
 import { switchMap, take, tap } from 'rxjs/operators';
+import { RequestStatusEnum } from 'src/app/enum/request-status.enum';
 
 import { ApiResponse } from 'src/app/models/api-response';
 import { environment } from 'src/environments/environment';
@@ -19,7 +21,8 @@ export class RequestService {
   constructor(
     private http: HttpClient,
     private userService: UserService,
-    private discoverService: DiscoverService
+    private discoverService: DiscoverService,
+    private loadingCtrl: LoadingController
   ) {
     this.loadRequestStatusList().subscribe();
   }
@@ -43,11 +46,14 @@ export class RequestService {
   }
 
   createRequest(newRequest: Request) {
+    this.loadingCtrl.create({
+      message: 'Please wait ...'
+    }).then(elem => elem.present());
+
     let savedRequest: Request;
     return this.userService.loggedInUser.pipe(
       take(1),
       switchMap((user) => {
-        console.log('Switched from loggedInUser');
         newRequest.submittedBy = user;
         return this.http.post<ApiResponse>(
           `${this.apiBaseUrl}/request/create`,
@@ -56,8 +62,6 @@ export class RequestService {
       }),
       take(1),
       switchMap((response) => {
-        console.log('Switched from API');
-
         if (response.ok) {
           savedRequest = { ...newRequest, _id: response.id };
           return this.myRequests;
@@ -68,11 +72,16 @@ export class RequestService {
       take(1),
       tap((requests) => {
         this._myRequests.next(requests.concat(savedRequest));
+        this.loadingCtrl.dismiss();
       })
     );
   }
 
   updateRequest(editRequest: Request) {
+    this.loadingCtrl.create({
+      message: 'Please wait ...'
+    }).then(elem => elem.present());
+
     let updatedRequests: Request[];
     let savedRequest: Request;
     return this.userService.loggedInUser.pipe(
@@ -102,10 +111,12 @@ export class RequestService {
         updatedRequests.splice(index, 1, savedRequest);
         this._myRequests.next(updatedRequests);
 
+        this.loadingCtrl.dismiss();
+
         // let's reload discovered requests
         if (
-          editRequest.requestStatus.desc === 'Processing' ||
-          editRequest.requestStatus.desc === 'Submitted'
+          editRequest.requestStatus.desc === RequestStatusEnum.Processing ||
+          editRequest.requestStatus.desc === RequestStatusEnum.Submitted
         ) {
           this.discoverService
             .findSubmittedRequests()
@@ -123,6 +134,10 @@ export class RequestService {
   }
 
   fetchRequests(isDonar: boolean) {
+    this.loadingCtrl.create({
+      message: 'Please wait ...'
+    }).then(elem => elem.present());
+
     return this.userService.loggedInUser.pipe(
       take(1),
       switchMap((user) => {
@@ -136,7 +151,10 @@ export class RequestService {
           );
         }
       }),
-      tap((requests) => this._myRequests.next(requests))
+      tap((requests) => {
+        this._myRequests.next(requests);
+        this.loadingCtrl.dismiss();
+      })
     );
   }
 }

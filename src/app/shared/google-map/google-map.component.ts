@@ -57,14 +57,15 @@ export class GoogleMapComponent implements AfterViewInit {
                                     <div class="title">
                                     <b>${item.infoWin.title}</b></div>
                                     <div class="address">${item.infoWin.addressText}</div>
-                                    <div class="contact">${item.infoWin.mobile}</div>
+                                    <div class="contact"><a href="tel:${item.infoWin.mobile}">${item.infoWin.mobile}</a></div>
                                   </div>`;
 
+      const markerText = item.type === 'donor' ? 'O2' : '\uf0f9';//'\uf299';
       const marker = new google.maps.Marker({
         label: {
           fontFamily: 'Fontawesome',
           color: '#ffffff',
-          text: '\uf299'
+          text: markerText
         },
         position: item.position,
         map: this.map,

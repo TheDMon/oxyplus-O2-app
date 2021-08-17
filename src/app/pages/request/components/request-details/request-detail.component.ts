@@ -48,7 +48,6 @@ export class RequestDetailComponent implements OnInit {
       buttons.push({
         text: 'Assign',
         handler: () => {
-          // eslint-disable-next-line no-underscore-dangle
           this.request.assignedTo = this.user;
           this.updateRequest(
             this.statusList.find((x) => x.desc === RequestStatusEnum.Processing)
@@ -118,6 +117,7 @@ export class RequestDetailComponent implements OnInit {
   updateRequest(status: RequestStatus) {
     const editRequest = { ...this.request };
     editRequest.requestStatus = status;
+    editRequest.updatedOn = new Date();
     this.requestService.updateRequest(editRequest).subscribe(() => {
       this.request = editRequest;
       this.alertUtil.presentToast('Status updated');

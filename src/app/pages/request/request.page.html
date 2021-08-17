@@ -26,13 +26,13 @@
 <ion-content>
 
 
-  <ion-grid *ngIf="isLoading">
+  <!-- <ion-grid *ngIf="isLoading">
     <ion-row>
       <ion-col size="12" size-sm="8" offset-sm="2" class="ion-text-center">
         <ion-spinner color="primary"></ion-spinner>
       </ion-col>
     </ion-row>
-  </ion-grid>
+  </ion-grid> -->
   <ion-grid *ngIf="!isLoading && (!requests || requests.length <= 0)">
     <ion-row>
       <ion-col size="12" size-sm="8" offset-sm="2" class="ion-text-center">
@@ -43,7 +43,6 @@
   <ion-grid *ngIf="!isLoading && requests.length > 0">
     <ion-row>
       <ion-col size="12" size-sm="8" offset-sm="2" class="ion-text-center">
-        <ion-list>
           <ion-item class="ion-no-padding"
             *ngFor="let request of requests"
             (click)="onRequestClicked(request)"
@@ -72,7 +71,6 @@
               </ion-row>
             </ion-grid>
           </ion-item>
-        </ion-list>
       </ion-col>
     </ion-row>
   </ion-grid>

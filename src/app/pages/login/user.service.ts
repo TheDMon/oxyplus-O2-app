@@ -9,6 +9,7 @@ import { ApiResponse } from 'src/app/models/api-response';
 import { SubscriptionDetails } from 'src/app/models/subscription-details';
 import { environment } from 'src/environments/environment';
 import { User } from '../../models/user';
+import { LoadingController } from '@ionic/angular';
 
 interface UserData {
   email: string;
@@ -24,12 +25,27 @@ export class UserService {
   private _accessToken = new BehaviorSubject<string>(null);
   private _userEmail: string;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private loadingCtrl: LoadingController
+  ) {}
 
   get isAuthenticated() {
     return this._accessToken
       .asObservable()
       .pipe(map((accessToken) => !!accessToken));
+  }
+
+  get hasSubscribedToNotification() {
+    return this.loggedInUser.pipe(
+      map((user) => {
+        if (user) {
+          return !!user.subscriptionDetails;
+        } else {
+          of(false);
+        }
+      })
+    );
   }
 
   get userEmail() {
@@ -57,13 +73,31 @@ export class UserService {
   }
 
   registerAccount(email: string, password: string) {
-    return this.http.post(`${this.apiBaseUrl}/auth/register`, {
-      email,
-      password,
-    });
+    this.loadingCtrl
+      .create({
+        message: 'Please wait ...',
+      })
+      .then((elem) => elem.present());
+
+    return this.http
+      .post(`${this.apiBaseUrl}/auth/register`, {
+        email,
+        password,
+      })
+      .pipe(
+        tap(() => {
+          this.loadingCtrl.dismiss();
+        })
+      );
   }
 
   login(email: string, password: string) {
+    this.loadingCtrl
+      .create({
+        message: 'Please wait ...',
+      })
+      .then((elem) => elem.present());
+
     this._userEmail = email;
 
     return this.http
@@ -81,6 +115,8 @@ export class UserService {
             key: this.userAccessKey,
             value: JSON.stringify(userData),
           });
+
+          this.loadingCtrl.dismiss();
         })
       );
   }
@@ -139,7 +175,7 @@ export class UserService {
 
         const userData = JSON.parse(storedData.value) as UserData;
         this._accessToken.next(userData.accessToken);
-        return this.loadUserProfile(userData.email);;
+        return this.loadUserProfile(userData.email);
       }),
       map((users) => users && users.length > 0)
     );
