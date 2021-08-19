@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
-import { switchMap, take, tap } from 'rxjs/operators';
+import { catchError, finalize, switchMap, take, tap } from 'rxjs/operators';
 import { Request } from 'src/app/models/request';
 import { User } from 'src/app/models/user';
 import { UserService } from 'src/app/pages/login/user.service';
@@ -59,6 +59,10 @@ export class DiscoverService {
       tap((requests) => {
         this._discoveredRequests.next(requests);
         this.loadingCtrl.dismiss();
+      }),
+      catchError(error => {
+        this.loadingCtrl.dismiss();
+        throw error;
       })
     );
   }
@@ -82,6 +86,10 @@ export class DiscoverService {
       tap((donors) => {
         this._discoveredDonors.next(donors);
         this.loadingCtrl.dismiss();
+      }),
+      catchError(error => {
+        this.loadingCtrl.dismiss();
+        throw error;
       })
     );
   }

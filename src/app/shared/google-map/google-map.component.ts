@@ -2,7 +2,8 @@ import { AfterViewInit, EventEmitter, OnDestroy } from '@angular/core';
 import { Component, ElementRef, OnInit, Output, ViewChild } from '@angular/core';
 import { Geolocation } from '@capacitor/geolocation';
 
-import { MapMarker } from 'src/app/models/map-marker';
+import { Coordinate } from '../../models/location';
+import { MapMarker } from '../../models/map-marker';
 
 declare let google: any;
 
@@ -56,8 +57,10 @@ export class GoogleMapComponent implements AfterViewInit {
       const infoWindowContent = `<div id="infoWindow">
                                     <div class="title">
                                     <b>${item.infoWin.title}</b></div>
-                                    <div class="address">${item.infoWin.addressText}</div>
                                     <div class="contact"><a href="tel:${item.infoWin.mobile}">${item.infoWin.mobile}</a></div>
+                                    <div class="address">${item.infoWin.addressText}</div>
+                                    <div><a target="_blank" href="https://maps.google.com/maps?daddr=${item.position.lat},${item.position.lng}&amp;ll=">
+                                    <span> View on Google Maps </span> </a></div>
                                   </div>`;
 
       const markerText = item.type === 'donor' ? 'O2' : '\uf0f9';//'\uf299';
@@ -94,3 +97,4 @@ export class GoogleMapComponent implements AfterViewInit {
     this.map.fitBounds(this.bounds);
   }
 }
+

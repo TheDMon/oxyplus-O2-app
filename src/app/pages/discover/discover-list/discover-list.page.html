@@ -76,6 +76,7 @@
             <ion-item class="item-style" style="margin-bottom: 5px">
               <ion-label class="ion-text-wrap ion-no-margin ion-no-padding">
                 <p>{{ donor.location.address }}</p>
+                <p><a (click)="mapsSelector(donor.location.position)">View on Maps</a></p>
               </ion-label>
               <ion-icon name="location" slot="start" size="small" (click)="mapsSelector(donor.location.position)"></ion-icon>
             </ion-item>

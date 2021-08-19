@@ -177,7 +177,6 @@ export class ProfilePage implements OnInit, OnDestroy {
   }
 
   isFormValid(){
-    console.log(this.user);
     if(this.user.email && this.user.mobile && this.user.location && this.user.role){
       return this.isDonor ? this.user.quantity > -1 : true;
     } else {

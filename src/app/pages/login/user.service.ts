@@ -2,7 +2,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, from, of, throwError } from 'rxjs';
-import { map, switchMap, take, tap } from 'rxjs/operators';
+import {
+  catchError,
+  finalize,
+  map,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs/operators';
 import { Storage } from '@capacitor/storage';
 
 import { ApiResponse } from 'src/app/models/api-response';
@@ -73,52 +80,61 @@ export class UserService {
   }
 
   registerAccount(email: string, password: string) {
-    this.loadingCtrl
-      .create({
+    return from(
+      this.loadingCtrl.create({
         message: 'Please wait ...',
       })
-      .then((elem) => elem.present());
-
-    return this.http
-      .post(`${this.apiBaseUrl}/auth/register`, {
-        email,
-        password,
+    ).pipe(
+      switchMap((elem) => {
+        elem.present();
+        return this.http.post(`${this.apiBaseUrl}/auth/register`, {
+          email,
+          password,
+        });
+      }),
+      tap(() => {
+        this.loadingCtrl.dismiss();
+      }),
+      catchError((error) => {
+        this.loadingCtrl.dismiss();
+        throw error;
       })
-      .pipe(
-        tap(() => {
-          this.loadingCtrl.dismiss();
-        })
-      );
+    );
   }
 
   login(email: string, password: string) {
-    this.loadingCtrl
-      .create({
-        message: 'Please wait ...',
-      })
-      .then((elem) => elem.present());
-
     this._userEmail = email;
 
-    return this.http
-      .post(`${this.apiBaseUrl}/auth/login`, { email, password })
-      .pipe(
-        tap((authResponse: any) => {
-          const userData: UserData = {
-            email,
-            accessToken: authResponse.accessToken,
-          };
+    return from(
+      this.loadingCtrl.create({
+        message: 'Please wait ...',
+      })
+    ).pipe(
+      switchMap((elem) => {
+        elem.present();
+        return this.http.post(`${this.apiBaseUrl}/auth/login`, {
+          email,
+          password,
+        });
+      }),
+      tap((authResponse: any) => {
+        const userData: UserData = {
+          email,
+          accessToken: authResponse.accessToken,
+        };
 
-          this._accessToken.next(authResponse.accessToken);
-          // store in device
-          Storage.set({
-            key: this.userAccessKey,
-            value: JSON.stringify(userData),
-          });
-
-          this.loadingCtrl.dismiss();
-        })
-      );
+        this._accessToken.next(authResponse.accessToken);
+        // store in device
+        Storage.set({
+          key: this.userAccessKey,
+          value: JSON.stringify(userData),
+        });
+      }),
+      catchError((error) => {
+        throw error;
+      }),
+      finalize(() => this.loadingCtrl.dismiss())
+    );
   }
 
   loadUserProfile(email: string) {
@@ -137,33 +153,60 @@ export class UserService {
   }
 
   createUserProfile(user: User) {
-    return this.http
-      .post<ApiResponse>(`${this.apiBaseUrl}/oxyplus/profile/create`, user)
-      .pipe(
-        take(1),
-        tap((res) => {
-          if (res.ok) {
-            return this.loadUserProfile(user.email);
-          } else {
-            throw throwError('Some error has occurred');
-          }
-        })
-      );
+    return from(
+      this.loadingCtrl.create({
+        message: 'Please wait ...',
+      })
+    ).pipe(
+      switchMap((elem) => {
+        elem.present();
+        return this.http.post<ApiResponse>(
+          `${this.apiBaseUrl}/oxyplus/profile/create`,
+          user
+        );
+      }),
+      take(1),
+      tap((res) => {
+        if (res.ok) {
+          this.loadingCtrl.dismiss();
+          return this.loadUserProfile(user.email);
+        } else {
+          throw throwError('Some error has occurred');
+        }
+      }),
+      catchError((error) => {
+        this.loadingCtrl.dismiss();
+        throw error;
+      })
+    );
   }
 
   updateUserProfile(user: User) {
-    return this.http
-      .post<ApiResponse>(`${this.apiBaseUrl}/oxyplus/profile/update`, user)
-      .pipe(
-        take(1),
-        tap((res) => {
-          if (res.ok) {
-            return this.loadUserProfile(user.email);
-          } else {
-            throw throwError('Some error has occurred');
-          }
-        })
-      );
+    return from(
+      this.loadingCtrl.create({
+        message: 'Please wait ...',
+      })
+    ).pipe(
+      switchMap((elem) => {
+        elem.present();
+        return this.http.post<ApiResponse>(
+          `${this.apiBaseUrl}/oxyplus/profile/update`,
+          user
+        );
+      }),
+      take(1),
+      map((res) => {
+        if (res.ok) {
+          return this.loadUserProfile(user.email);
+        } else {
+          throw throwError('Some error has occurred');
+        }
+      }),
+      catchError((error) => {
+        throw error;
+      }),
+      finalize(() => this.loadingCtrl.dismiss())
+    );
   }
 
   autoLogin() {
@@ -190,12 +233,19 @@ export class UserService {
   }
 
   updateSubscriptionDetails(subscriptionDetails: SubscriptionDetails) {
+    this.loadingCtrl
+      .create({
+        message: 'Please wait ...',
+      })
+      .then((elem) => elem.present());
+
     return this.loggedInUser.pipe(
       take(1),
       switchMap((user) => {
         user.subscriptionDetails = subscriptionDetails;
         return this.updateUserProfile(user);
-      })
+      }),
+      finalize(() => this.loadingCtrl.dismiss())
     );
   }
 }

@@ -2,8 +2,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
-import { BehaviorSubject, throwError } from 'rxjs';
-import { switchMap, take, tap } from 'rxjs/operators';
+import { BehaviorSubject, from, throwError } from 'rxjs';
+import {
+  catchError,
+  finalize,
+  map,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs/operators';
 import { RequestStatusEnum } from 'src/app/enum/request-status.enum';
 
 import { ApiResponse } from 'src/app/models/api-response';
@@ -46,12 +53,17 @@ export class RequestService {
   }
 
   createRequest(newRequest: Request) {
-    this.loadingCtrl.create({
-      message: 'Please wait ...'
-    }).then(elem => elem.present());
-
     let savedRequest: Request;
-    return this.userService.loggedInUser.pipe(
+
+    return from(
+      this.loadingCtrl.create({
+        message: 'Please wait ...',
+      })
+    ).pipe(
+      switchMap((elem) => {
+        elem.present();
+        return this.userService.loggedInUser;
+      }),
       take(1),
       switchMap((user) => {
         newRequest.submittedBy = user;
@@ -72,21 +84,26 @@ export class RequestService {
       take(1),
       tap((requests) => {
         this._myRequests.next(requests.concat(savedRequest));
-        this.loadingCtrl.dismiss();
-      })
+      }),
+      catchError((error) => {
+        throw error;
+      }),
+      finalize(() => this.loadingCtrl.dismiss())
     );
   }
 
   updateRequest(editRequest: Request) {
-    this.loadingCtrl.create({
-      message: 'Please wait ...'
-    }).then(elem => elem.present());
-
     let updatedRequests: Request[];
     let savedRequest: Request;
     return this.userService.loggedInUser.pipe(
       take(1),
       switchMap((user) => {
+        this.loadingCtrl
+          .create({
+            message: 'Please wait ...',
+          })
+          .then((elem) => elem.present());
+
         editRequest.updatedBy = user;
         return this.http.post<ApiResponse>(
           `${this.apiBaseUrl}/request/update`,
@@ -111,8 +128,6 @@ export class RequestService {
         updatedRequests.splice(index, 1, savedRequest);
         this._myRequests.next(updatedRequests);
 
-        this.loadingCtrl.dismiss();
-
         // let's reload discovered requests
         if (
           editRequest.requestStatus.desc === RequestStatusEnum.Processing ||
@@ -123,22 +138,24 @@ export class RequestService {
             .pipe(take(1))
             .subscribe();
         }
-      })
-    );
-  }
-
-  viewRequests(status: string) {
-    return this.http.get<Request[]>(
-      `${this.apiBaseUrl}/request/list/${status}`
+      }),
+      catchError((error) => {
+        throw error;
+      }),
+      finalize(() => this.loadingCtrl.dismiss())
     );
   }
 
   fetchRequests(isDonar: boolean) {
-    this.loadingCtrl.create({
-      message: 'Please wait ...'
-    }).then(elem => elem.present());
-
-    return this.userService.loggedInUser.pipe(
+    return from(
+      this.loadingCtrl.create({
+        message: 'Please wait ...',
+      })
+    ).pipe(
+      switchMap((elem) => {
+        elem.present();
+        return this.userService.loggedInUser;
+      }),
       take(1),
       switchMap((user) => {
         if (isDonar) {
@@ -153,6 +170,8 @@ export class RequestService {
       }),
       tap((requests) => {
         this._myRequests.next(requests);
+      }),
+      finalize(() => {
         this.loadingCtrl.dismiss();
       })
     );

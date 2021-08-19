@@ -9,8 +9,9 @@ import { AppRoutingModule } from './app-routing.module';
 
 import { environment } from '../environments/environment';
 
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ServiceWorkerModule } from '@angular/service-worker';
+import { HttpErrorInterceptor } from './interceptors/http-error.interceptor';
 
 @NgModule({
   declarations: [AppComponent],
@@ -28,7 +29,8 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     })
   ],
   providers: [
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true }
   ],
   bootstrap: [AppComponent],
 })

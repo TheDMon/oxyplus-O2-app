@@ -3,19 +3,27 @@ importScripts("./ngsw-worker.js");
  var apiBaseUrl = 'https://oxyplus-api.mybluemix.net';
 
  // let's implement notification click since swPush is a disappointment
-self.addEventListener('notificationclick', (event) => {
-  if(clients.openWindow && event.notification.data.url){
-    event.waitUntil(clients.openWindow(event.notification.data.url));
-  }
-})
+ self.addEventListener('notificationclick', function(event) {
+  var notification = event.notification;
+  console.log('notification', notification);
 
-//  (function Init(){
-//    if (window.location.href.includes('localhost')) {
-//      apiBaseUrl = 'http://localhost:3000';
-//    } else {
-//      apiBaseUrl = 'https://oxyplus-api.mybluemix.net';
-//    }
-//  })();
+  event.waitUntil(
+    clients.matchAll()
+      .then(function(clis) {
+        var client = clis.find(function(x) {
+          return x.visibilityState === 'visible';
+        });
+
+        if (client !== undefined) {
+          client.navigate(notification.data.url);
+          client.focus();
+        } else {
+          clients.openWindow(notification.data.url);
+        }
+        notification.close();
+      }),
+  );
+});
 
 self.addEventListener("sync", function (event) {
   if (event.tag === 'add-request') {
@@ -58,8 +66,4 @@ function sendRequest(request) {
   })
     .then(() => Promise.resolve())
     .catch(() => Promise.reject());
-}
-
-function deleteLocalCopy(){
-
 }
