@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { AfterViewInit, EventEmitter, OnDestroy } from '@angular/core';
 import { Component, ElementRef, OnInit, Output, ViewChild } from '@angular/core';
 import { Geolocation } from '@capacitor/geolocation';
@@ -39,7 +40,8 @@ export class GoogleMapComponent implements AfterViewInit {
 
         this.map = new google.maps.Map(this.mapRef.nativeElement, {
           center: pos,
-          zoom: 15
+          zoom: 15,
+          mapTypeId: 'roadmap',
         });
 
         this.bounds.extend(pos);

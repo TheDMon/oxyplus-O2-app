@@ -43,6 +43,10 @@ export class UserService {
       .pipe(map((accessToken) => !!accessToken));
   }
 
+  get userAccessToken() {
+    return this._accessToken.asObservable();
+  }
+
   get hasSubscribedToNotification() {
     return this.loggedInUser.pipe(
       map((user) => {
@@ -233,13 +237,15 @@ export class UserService {
   }
 
   updateSubscriptionDetails(subscriptionDetails: SubscriptionDetails) {
-    this.loadingCtrl
-      .create({
+    return from(
+      this.loadingCtrl.create({
         message: 'Please wait ...',
       })
-      .then((elem) => elem.present());
-
-    return this.loggedInUser.pipe(
+    ).pipe(
+      switchMap((elem) => {
+        elem.present();
+        return this.loggedInUser;
+      }),
       take(1),
       switchMap((user) => {
         user.subscriptionDetails = subscriptionDetails;

@@ -24,9 +24,6 @@
         "files": [
           "/assets/**",
           "/*.(eot|svg|cur|jpg|png|webp|gif|otf|ttf|woff|woff2|ani)"
-        ],
-        "urls": [
-          "https://apis.mapmyindia.com/advancedmaps/v1/4877ca98884eb8a81788d9435ddcc3ca/map_load?v=1.3"
         ]
       }
     }
@@ -35,6 +32,7 @@
     {
       "name": "data",
       "urls": [
+        "https://maps.googleapis.com/maps/api/js/**",
         "https://oxyplus.mybluemix.net/**",
         "https://oxyplus-api.mybluemix.net/**"
       ],

@@ -1,6 +1,6 @@
 #map {
     height: 100%;
-    background: #b6b5b5;
+    background: var(--oxyplus-light-trans-bg-color, #f8dede);
     display: flex;
     justify-content: center;
 }

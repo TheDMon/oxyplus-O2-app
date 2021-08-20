@@ -2,7 +2,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, from } from 'rxjs';
 import { catchError, finalize, switchMap, take, tap } from 'rxjs/operators';
 import { Request } from 'src/app/models/request';
 import { User } from 'src/app/models/user';
@@ -44,11 +44,15 @@ export class DiscoverService {
     let distance: number;
     return this.distanceDiscovered.pipe(
       switchMap((dis) => {
-        this.loadingCtrl.create({
-          message: 'Please wait...'
-        }).then(elem => elem.present());
-
         distance = dis;
+        return from(
+          this.loadingCtrl.create({
+            message: 'Please wait...',
+          })
+        );
+      }),
+      switchMap((elem) => {
+        elem.present();
         return this.userService.loggedInUser;
       }),
       switchMap((user) =>
@@ -60,7 +64,7 @@ export class DiscoverService {
         this._discoveredRequests.next(requests);
         this.loadingCtrl.dismiss();
       }),
-      catchError(error => {
+      catchError((error) => {
         this.loadingCtrl.dismiss();
         throw error;
       })
@@ -71,11 +75,15 @@ export class DiscoverService {
     let distance: number;
     return this.distanceDiscovered.pipe(
       switchMap((dis) => {
-        this.loadingCtrl.create({
-          message: 'Please wait...'
-        }).then(elem => elem.present());
-
         distance = dis;
+        return from(
+          this.loadingCtrl.create({
+            message: 'Please wait...',
+          })
+        );
+      }),
+      switchMap((elem) => {
+        elem.present();
         return this.userService.loggedInUser;
       }),
       switchMap((user) =>
@@ -87,7 +95,7 @@ export class DiscoverService {
         this._discoveredDonors.next(donors);
         this.loadingCtrl.dismiss();
       }),
-      catchError(error => {
+      catchError((error) => {
         this.loadingCtrl.dismiss();
         throw error;
       })

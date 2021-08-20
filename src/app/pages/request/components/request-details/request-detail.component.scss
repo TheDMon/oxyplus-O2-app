@@ -3,7 +3,7 @@ ion-card {
 }
 
 .info {
-  background-color: rgba(218, 221, 226, 0.2);
+  background-color: var(--oxyplus-light-trans-bg-color);
   border-radius: 10px;
   margin-bottom: 5px;
 
@@ -13,5 +13,5 @@ ion-card {
 }
 
 ion-card-header {
-  background-color: rgba(218, 221, 226, 0.2);
+  background-color: var(--oxyplus-light-trans-bg-color);
 }
